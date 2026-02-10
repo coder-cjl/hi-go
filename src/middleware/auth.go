@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// JWTAuth JWT 认证中间件
+// 认证中间件
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. 从请求头获取 token
@@ -47,7 +47,7 @@ func JWTAuth() gin.HandlerFunc {
 	}
 }
 
-// RoleAuth 角色权限中间件
+// 角色权限中间件
 func RoleAuth(allowedRoles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 获取用户角色

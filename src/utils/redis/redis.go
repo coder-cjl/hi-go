@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Client 全局Redis客户端实例
+// 全局Redis客户端实例
 var Client *redis.Client
 
 // 错误定义
@@ -22,7 +22,7 @@ var (
 	ErrEmptyKey    = errors.New("redis: 键不能为空")
 )
 
-// Config Redis配置结构
+// Redis配置结构
 type Config struct {
 	Addr         string        // Redis地址 (host:port)
 	Password     string        // 密码（如果没有则为空）
@@ -36,7 +36,7 @@ type Config struct {
 	PoolTimeout  time.Duration // 连接池超时
 }
 
-// DefaultConfig 返回默认配置
+// 返回默认配置
 func DefaultConfig() *Config {
 	return &Config{
 		Addr:         "localhost:6379",
@@ -52,7 +52,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// Init 使用配置初始化Redis客户端
+// 使用配置初始化Redis客户端
 func Init(cfg *Config) error {
 	if cfg == nil {
 		cfg = DefaultConfig()
@@ -84,19 +84,19 @@ func Init(cfg *Config) error {
 	return nil
 }
 
-// init 自动初始化默认Redis客户端
+// 自动初始化默认Redis客户端
 func init() {
 	if err := Init(DefaultConfig()); err != nil {
 		logger.Error("Redis 初始化失败", zap.Error(err))
 	}
 }
 
-// GetClient 获取全局Redis客户端
+// 获取全局Redis客户端
 func GetClient() *redis.Client {
 	return Client
 }
 
-// Close 关闭Redis连接
+// 关闭Redis连接
 func Close() error {
 	if Client == nil {
 		return nil
@@ -104,7 +104,7 @@ func Close() error {
 	return Client.Close()
 }
 
-// Ping 检查Redis连接是否正常（健康检查）
+// 检查Redis连接是否正常（健康检查）
 func Ping(ctx context.Context) error {
 	if Client == nil {
 		return ErrClientNil
@@ -114,7 +114,8 @@ func Ping(ctx context.Context) error {
 
 // ==================== String 操作 ====================
 
-// Set 设置键值对
+//	设置键值对
+//
 // 参数:
 //   - ctx: 上下文
 //   - key: 键
@@ -130,7 +131,8 @@ func Set(ctx context.Context, key string, value interface{}, expiration time.Dur
 	return Client.Set(ctx, key, value, expiration).Err()
 }
 
-// Get 获取键对应的值
+//	获取键对应的值
+//
 // 参数:
 //   - ctx: 上下文
 //   - key: 键
@@ -153,7 +155,7 @@ func Get(ctx context.Context, key string) (string, error) {
 	return val, err
 }
 
-// GetSet 设置新值并返回旧值
+// 设置新值并返回旧值
 func GetSet(ctx context.Context, key string, value interface{}) (string, error) {
 	if key == "" {
 		return "", ErrEmptyKey
@@ -164,7 +166,7 @@ func GetSet(ctx context.Context, key string, value interface{}) (string, error) 
 	return Client.GetSet(ctx, key, value).Result()
 }
 
-// SetNX 仅当键不存在时设置（分布式锁常用）
+// 仅当键不存在时设置（分布式锁常用）
 func SetNX(ctx context.Context, key string, value interface{}, expiration time.Duration) (bool, error) {
 	if key == "" {
 		return false, ErrEmptyKey
@@ -175,7 +177,7 @@ func SetNX(ctx context.Context, key string, value interface{}, expiration time.D
 	return Client.SetNX(ctx, key, value, expiration).Result()
 }
 
-// SetEX 设置键值对并指定过期时间（秒）
+// 设置键值对并指定过期时间（秒）
 func SetEX(ctx context.Context, key string, value interface{}, seconds int) error {
 	if key == "" {
 		return ErrEmptyKey
@@ -186,7 +188,7 @@ func SetEX(ctx context.Context, key string, value interface{}, seconds int) erro
 	return Client.SetEx(ctx, key, value, time.Duration(seconds)*time.Second).Err()
 }
 
-// MGet 批量获取多个键的值
+// 批量获取多个键的值
 func MGet(ctx context.Context, keys ...string) ([]interface{}, error) {
 	if len(keys) == 0 {
 		return nil, ErrEmptyKey
@@ -197,7 +199,7 @@ func MGet(ctx context.Context, keys ...string) ([]interface{}, error) {
 	return Client.MGet(ctx, keys...).Result()
 }
 
-// MSet 批量设置多个键值对
+// 批量设置多个键值对
 func MSet(ctx context.Context, pairs ...interface{}) error {
 	if len(pairs) == 0 {
 		return errors.New("pairs cannot be empty")
@@ -208,7 +210,7 @@ func MSet(ctx context.Context, pairs ...interface{}) error {
 	return Client.MSet(ctx, pairs...).Err()
 }
 
-// Incr 将键的整数值加1
+// 将键的整数值加1
 func Incr(ctx context.Context, key string) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -219,7 +221,7 @@ func Incr(ctx context.Context, key string) (int64, error) {
 	return Client.Incr(ctx, key).Result()
 }
 
-// IncrBy 将键的整数值增加指定数值
+// 将键的整数值增加指定数值
 func IncrBy(ctx context.Context, key string, value int64) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -230,7 +232,7 @@ func IncrBy(ctx context.Context, key string, value int64) (int64, error) {
 	return Client.IncrBy(ctx, key, value).Result()
 }
 
-// Decr 将键的整数值减1
+// 将键的整数值减1
 func Decr(ctx context.Context, key string) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -241,7 +243,7 @@ func Decr(ctx context.Context, key string) (int64, error) {
 	return Client.Decr(ctx, key).Result()
 }
 
-// DecrBy 将键的整数值减少指定数值
+// 将键的整数值减少指定数值
 func DecrBy(ctx context.Context, key string, value int64) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -254,7 +256,7 @@ func DecrBy(ctx context.Context, key string, value int64) (int64, error) {
 
 // ==================== Key 操作 ====================
 
-// Del 删除一个或多个键
+// 删除一个或多个键
 func Del(ctx context.Context, keys ...string) (int64, error) {
 	if len(keys) == 0 {
 		return 0, ErrEmptyKey
@@ -265,7 +267,7 @@ func Del(ctx context.Context, keys ...string) (int64, error) {
 	return Client.Del(ctx, keys...).Result()
 }
 
-// Exists 检查键是否存在
+// 检查键是否存在
 func Exists(ctx context.Context, keys ...string) (int64, error) {
 	if len(keys) == 0 {
 		return 0, ErrEmptyKey
@@ -276,7 +278,7 @@ func Exists(ctx context.Context, keys ...string) (int64, error) {
 	return Client.Exists(ctx, keys...).Result()
 }
 
-// Expire 设置键的过期时间
+// 设置键的过期时间
 func Expire(ctx context.Context, key string, expiration time.Duration) (bool, error) {
 	if key == "" {
 		return false, ErrEmptyKey
@@ -287,7 +289,7 @@ func Expire(ctx context.Context, key string, expiration time.Duration) (bool, er
 	return Client.Expire(ctx, key, expiration).Result()
 }
 
-// ExpireAt 设置键在指定时间过期
+// 设置键在指定时间过期
 func ExpireAt(ctx context.Context, key string, tm time.Time) (bool, error) {
 	if key == "" {
 		return false, ErrEmptyKey
@@ -298,7 +300,7 @@ func ExpireAt(ctx context.Context, key string, tm time.Time) (bool, error) {
 	return Client.ExpireAt(ctx, key, tm).Result()
 }
 
-// TTL 获取键的剩余生存时间
+// 获取键的剩余生存时间
 func TTL(ctx context.Context, key string) (time.Duration, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -309,7 +311,7 @@ func TTL(ctx context.Context, key string) (time.Duration, error) {
 	return Client.TTL(ctx, key).Result()
 }
 
-// Persist 移除键的过期时间
+// 移除键的过期时间
 func Persist(ctx context.Context, key string) (bool, error) {
 	if key == "" {
 		return false, ErrEmptyKey
@@ -320,7 +322,7 @@ func Persist(ctx context.Context, key string) (bool, error) {
 	return Client.Persist(ctx, key).Result()
 }
 
-// Keys 查找所有符合给定模式的键
+// 查找所有符合给定模式的键
 func Keys(ctx context.Context, pattern string) ([]string, error) {
 	if Client == nil {
 		return nil, ErrClientNil
@@ -328,7 +330,7 @@ func Keys(ctx context.Context, pattern string) ([]string, error) {
 	return Client.Keys(ctx, pattern).Result()
 }
 
-// Rename 重命名键
+// 重命名键
 func Rename(ctx context.Context, key, newKey string) error {
 	if key == "" || newKey == "" {
 		return ErrEmptyKey
@@ -339,7 +341,7 @@ func Rename(ctx context.Context, key, newKey string) error {
 	return Client.Rename(ctx, key, newKey).Err()
 }
 
-// Type 返回键存储的值的类型
+// 返回键存储的值的类型
 func Type(ctx context.Context, key string) (string, error) {
 	if key == "" {
 		return "", ErrEmptyKey
@@ -352,7 +354,7 @@ func Type(ctx context.Context, key string) (string, error) {
 
 // ==================== Hash 操作 ====================
 
-// HSet 设置哈希表字段的值
+// 设置哈希表字段的值
 func HSet(ctx context.Context, key string, values ...interface{}) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -363,7 +365,7 @@ func HSet(ctx context.Context, key string, values ...interface{}) (int64, error)
 	return Client.HSet(ctx, key, values...).Result()
 }
 
-// HGet 获取哈希表中指定字段的值
+// 获取哈希表中指定字段的值
 func HGet(ctx context.Context, key, field string) (string, error) {
 	if key == "" || field == "" {
 		return "", ErrEmptyKey
@@ -379,7 +381,7 @@ func HGet(ctx context.Context, key, field string) (string, error) {
 	return val, err
 }
 
-// HGetAll 获取哈希表中所有字段和值
+// 获取哈希表中所有字段和值
 func HGetAll(ctx context.Context, key string) (map[string]string, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -401,7 +403,7 @@ func HMGet(ctx context.Context, key string, fields ...string) ([]interface{}, er
 	return Client.HMGet(ctx, key, fields...).Result()
 }
 
-// HMSet 批量设置哈希表中多个字段的值
+// 批量设置哈希表中多个字段的值
 func HMSet(ctx context.Context, key string, values ...interface{}) (bool, error) {
 	if key == "" {
 		return false, ErrEmptyKey
@@ -412,7 +414,7 @@ func HMSet(ctx context.Context, key string, values ...interface{}) (bool, error)
 	return Client.HMSet(ctx, key, values...).Result()
 }
 
-// HDel 删除哈希表中一个或多个字段
+// 删除哈希表中一个或多个字段
 func HDel(ctx context.Context, key string, fields ...string) (int64, error) {
 	if key == "" || len(fields) == 0 {
 		return 0, ErrEmptyKey
@@ -423,7 +425,7 @@ func HDel(ctx context.Context, key string, fields ...string) (int64, error) {
 	return Client.HDel(ctx, key, fields...).Result()
 }
 
-// HExists 检查哈希表中字段是否存在
+// 检查哈希表中字段是否存在
 func HExists(ctx context.Context, key, field string) (bool, error) {
 	if key == "" || field == "" {
 		return false, ErrEmptyKey
@@ -434,7 +436,7 @@ func HExists(ctx context.Context, key, field string) (bool, error) {
 	return Client.HExists(ctx, key, field).Result()
 }
 
-// HKeys 获取哈希表中所有字段
+// 获取哈希表中所有字段
 func HKeys(ctx context.Context, key string) ([]string, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -445,7 +447,7 @@ func HKeys(ctx context.Context, key string) ([]string, error) {
 	return Client.HKeys(ctx, key).Result()
 }
 
-// HVals 获取哈希表中所有值
+// 获取哈希表中所有值
 func HVals(ctx context.Context, key string) ([]string, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -456,7 +458,7 @@ func HVals(ctx context.Context, key string) ([]string, error) {
 	return Client.HVals(ctx, key).Result()
 }
 
-// HLen 获取哈希表中字段的数量
+// 获取哈希表中字段的数量
 func HLen(ctx context.Context, key string) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -467,7 +469,7 @@ func HLen(ctx context.Context, key string) (int64, error) {
 	return Client.HLen(ctx, key).Result()
 }
 
-// HIncrBy 为哈希表中字段的整数值加上增量
+// 为哈希表中字段的整数值加上增量
 func HIncrBy(ctx context.Context, key, field string, incr int64) (int64, error) {
 	if key == "" || field == "" {
 		return 0, ErrEmptyKey
@@ -480,7 +482,7 @@ func HIncrBy(ctx context.Context, key, field string, incr int64) (int64, error) 
 
 // ==================== List 操作 ====================
 
-// LPush 将一个或多个值插入列表头部
+// 将一个或多个值插入列表头部
 func LPush(ctx context.Context, key string, values ...interface{}) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -491,7 +493,7 @@ func LPush(ctx context.Context, key string, values ...interface{}) (int64, error
 	return Client.LPush(ctx, key, values...).Result()
 }
 
-// RPush 将一个或多个值插入列表尾部
+// 将一个或多个值插入列表尾部
 func RPush(ctx context.Context, key string, values ...interface{}) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -502,7 +504,7 @@ func RPush(ctx context.Context, key string, values ...interface{}) (int64, error
 	return Client.RPush(ctx, key, values...).Result()
 }
 
-// LPop 移除并返回列表的第一个元素
+// 移除并返回列表的第一个元素
 func LPop(ctx context.Context, key string) (string, error) {
 	if key == "" {
 		return "", ErrEmptyKey
@@ -518,7 +520,7 @@ func LPop(ctx context.Context, key string) (string, error) {
 	return val, err
 }
 
-// RPop 移除并返回列表的最后一个元素
+// 移除并返回列表的最后一个元素
 func RPop(ctx context.Context, key string) (string, error) {
 	if key == "" {
 		return "", ErrEmptyKey
@@ -534,7 +536,7 @@ func RPop(ctx context.Context, key string) (string, error) {
 	return val, err
 }
 
-// LRange 获取列表指定范围内的元素
+// 获取列表指定范围内的元素
 func LRange(ctx context.Context, key string, start, stop int64) ([]string, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -545,7 +547,7 @@ func LRange(ctx context.Context, key string, start, stop int64) ([]string, error
 	return Client.LRange(ctx, key, start, stop).Result()
 }
 
-// LLen 获取列表长度
+// 获取列表长度
 func LLen(ctx context.Context, key string) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -556,7 +558,7 @@ func LLen(ctx context.Context, key string) (int64, error) {
 	return Client.LLen(ctx, key).Result()
 }
 
-// LRem 移除列表中与参数值相等的元素
+// 移除列表中与参数值相等的元素
 func LRem(ctx context.Context, key string, count int64, value interface{}) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -567,7 +569,7 @@ func LRem(ctx context.Context, key string, count int64, value interface{}) (int6
 	return Client.LRem(ctx, key, count, value).Result()
 }
 
-// LTrim 修剪列表，只保留指定区间内的元素
+// 修剪列表，只保留指定区间内的元素
 func LTrim(ctx context.Context, key string, start, stop int64) error {
 	if key == "" {
 		return ErrEmptyKey
@@ -580,7 +582,7 @@ func LTrim(ctx context.Context, key string, start, stop int64) error {
 
 // ==================== Set 操作 ====================
 
-// SAdd 向集合添加一个或多个成员
+// 向集合添加一个或多个成员
 func SAdd(ctx context.Context, key string, members ...interface{}) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -591,7 +593,7 @@ func SAdd(ctx context.Context, key string, members ...interface{}) (int64, error
 	return Client.SAdd(ctx, key, members...).Result()
 }
 
-// SMembers 获取集合中所有成员
+// 获取集合中所有成员
 func SMembers(ctx context.Context, key string) ([]string, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -602,7 +604,7 @@ func SMembers(ctx context.Context, key string) ([]string, error) {
 	return Client.SMembers(ctx, key).Result()
 }
 
-// SIsMember 判断元素是否是集合成员
+// 判断元素是否是集合成员
 func SIsMember(ctx context.Context, key string, member interface{}) (bool, error) {
 	if key == "" {
 		return false, ErrEmptyKey
@@ -613,7 +615,7 @@ func SIsMember(ctx context.Context, key string, member interface{}) (bool, error
 	return Client.SIsMember(ctx, key, member).Result()
 }
 
-// SCard 获取集合的成员数
+// 获取集合的成员数
 func SCard(ctx context.Context, key string) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -624,7 +626,7 @@ func SCard(ctx context.Context, key string) (int64, error) {
 	return Client.SCard(ctx, key).Result()
 }
 
-// SRem 移除集合中一个或多个成员
+// 移除集合中一个或多个成员
 func SRem(ctx context.Context, key string, members ...interface{}) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -635,7 +637,7 @@ func SRem(ctx context.Context, key string, members ...interface{}) (int64, error
 	return Client.SRem(ctx, key, members...).Result()
 }
 
-// SPop 移除并返回集合中的一个随机元素
+// 移除并返回集合中的一个随机元素
 func SPop(ctx context.Context, key string) (string, error) {
 	if key == "" {
 		return "", ErrEmptyKey
@@ -646,7 +648,7 @@ func SPop(ctx context.Context, key string) (string, error) {
 	return Client.SPop(ctx, key).Result()
 }
 
-// SRandMember 返回集合中一个或多个随机元素
+// 返回集合中一个或多个随机元素
 func SRandMember(ctx context.Context, key string, count int64) ([]string, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -659,7 +661,7 @@ func SRandMember(ctx context.Context, key string, count int64) ([]string, error)
 
 // ==================== Sorted Set 操作 ====================
 
-// ZAdd 向有序集合添加一个或多个成员
+// 向有序集合添加一个或多个成员
 func ZAdd(ctx context.Context, key string, members ...redis.Z) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -670,7 +672,7 @@ func ZAdd(ctx context.Context, key string, members ...redis.Z) (int64, error) {
 	return Client.ZAdd(ctx, key, members...).Result()
 }
 
-// ZRange 返回有序集合中指定区间内的成员（按分数从小到大）
+// 返回有序集合中指定区间内的成员（按分数从小到大）
 func ZRange(ctx context.Context, key string, start, stop int64) ([]string, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -681,7 +683,7 @@ func ZRange(ctx context.Context, key string, start, stop int64) ([]string, error
 	return Client.ZRange(ctx, key, start, stop).Result()
 }
 
-// ZRangeWithScores 返回有序集合中指定区间内的成员及分数
+// 返回有序集合中指定区间内的成员及分数
 func ZRangeWithScores(ctx context.Context, key string, start, stop int64) ([]redis.Z, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -692,7 +694,7 @@ func ZRangeWithScores(ctx context.Context, key string, start, stop int64) ([]red
 	return Client.ZRangeWithScores(ctx, key, start, stop).Result()
 }
 
-// ZRevRange 返回有序集合中指定区间内的成员（按分数从大到小）
+// 返回有序集合中指定区间内的成员（按分数从大到小）
 func ZRevRange(ctx context.Context, key string, start, stop int64) ([]string, error) {
 	if key == "" {
 		return nil, ErrEmptyKey
@@ -703,7 +705,7 @@ func ZRevRange(ctx context.Context, key string, start, stop int64) ([]string, er
 	return Client.ZRevRange(ctx, key, start, stop).Result()
 }
 
-// ZCard 获取有序集合的成员数
+// 获取有序集合的成员数
 func ZCard(ctx context.Context, key string) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -714,7 +716,7 @@ func ZCard(ctx context.Context, key string) (int64, error) {
 	return Client.ZCard(ctx, key).Result()
 }
 
-// ZScore 获取有序集合中成员的分数
+// 获取有序集合中成员的分数
 func ZScore(ctx context.Context, key, member string) (float64, error) {
 	if key == "" || member == "" {
 		return 0, ErrEmptyKey
@@ -725,7 +727,7 @@ func ZScore(ctx context.Context, key, member string) (float64, error) {
 	return Client.ZScore(ctx, key, member).Result()
 }
 
-// ZRem 移除有序集合中一个或多个成员
+// 移除有序集合中一个或多个成员
 func ZRem(ctx context.Context, key string, members ...interface{}) (int64, error) {
 	if key == "" {
 		return 0, ErrEmptyKey
@@ -736,7 +738,7 @@ func ZRem(ctx context.Context, key string, members ...interface{}) (int64, error
 	return Client.ZRem(ctx, key, members...).Result()
 }
 
-// ZIncrBy 有序集合中对指定成员的分数加上增量
+// 有序集合中对指定成员的分数加上增量
 func ZIncrBy(ctx context.Context, key string, increment float64, member string) (float64, error) {
 	if key == "" || member == "" {
 		return 0, ErrEmptyKey
@@ -747,7 +749,7 @@ func ZIncrBy(ctx context.Context, key string, increment float64, member string) 
 	return Client.ZIncrBy(ctx, key, increment, member).Result()
 }
 
-// ZRank 返回有序集合中指定成员的排名（按分数从小到大）
+// 返回有序集合中指定成员的排名（按分数从小到大）
 func ZRank(ctx context.Context, key, member string) (int64, error) {
 	if key == "" || member == "" {
 		return 0, ErrEmptyKey
@@ -760,7 +762,7 @@ func ZRank(ctx context.Context, key, member string) (int64, error) {
 
 // ==================== 高级操作 ====================
 
-// Pipeline 执行管道操作
+// 执行管道操作
 func Pipeline(ctx context.Context, fn func(redis.Pipeliner) error) ([]redis.Cmder, error) {
 	if Client == nil {
 		return nil, ErrClientNil
@@ -773,7 +775,7 @@ func Pipeline(ctx context.Context, fn func(redis.Pipeliner) error) ([]redis.Cmde
 	return pipe.Exec(ctx)
 }
 
-// TxPipeline 执行事务管道操作
+// 执行事务管道操作
 func TxPipeline(ctx context.Context, fn func(redis.Pipeliner) error) ([]redis.Cmder, error) {
 	if Client == nil {
 		return nil, ErrClientNil
@@ -786,7 +788,7 @@ func TxPipeline(ctx context.Context, fn func(redis.Pipeliner) error) ([]redis.Cm
 	return pipe.Exec(ctx)
 }
 
-// Watch 监视一个或多个键（用于事务）
+// 监视一个或多个键（用于事务）
 func Watch(ctx context.Context, fn func(*redis.Tx) error, keys ...string) error {
 	if Client == nil {
 		return ErrClientNil
@@ -794,7 +796,7 @@ func Watch(ctx context.Context, fn func(*redis.Tx) error, keys ...string) error 
 	return Client.Watch(ctx, fn, keys...)
 }
 
-// Scan 迭代当前数据库中的键
+// 迭代当前数据库中的键
 func Scan(ctx context.Context, cursor uint64, match string, count int64) ([]string, uint64, error) {
 	if Client == nil {
 		return nil, 0, ErrClientNil
@@ -802,7 +804,7 @@ func Scan(ctx context.Context, cursor uint64, match string, count int64) ([]stri
 	return Client.Scan(ctx, cursor, match, count).Result()
 }
 
-// FlushDB 清空当前数据库
+// 清空当前数据库
 func FlushDB(ctx context.Context) error {
 	if Client == nil {
 		return ErrClientNil
@@ -810,7 +812,7 @@ func FlushDB(ctx context.Context) error {
 	return Client.FlushDB(ctx).Err()
 }
 
-// FlushAll 清空所有数据库
+// 清空所有数据库
 func FlushAll(ctx context.Context) error {
 	if Client == nil {
 		return ErrClientNil
@@ -818,7 +820,7 @@ func FlushAll(ctx context.Context) error {
 	return Client.FlushAll(ctx).Err()
 }
 
-// DBSize 返回当前数据库的键数量
+// 返回当前数据库的键数量
 func DBSize(ctx context.Context) (int64, error) {
 	if Client == nil {
 		return 0, ErrClientNil

@@ -13,7 +13,7 @@ var (
 	sugar *zap.SugaredLogger
 )
 
-// Config 日志配置结构
+// 日志配置结构
 type Config struct {
 	Level      string // 日志级别: debug, info, warn, error, fatal
 	Env        string // 环境: dev, prod
@@ -25,7 +25,7 @@ type Config struct {
 	Compress   bool   // 是否压缩旧日志
 }
 
-// DefaultConfig 默认配置
+// 默认配置
 func DefaultConfig() *Config {
 	return &Config{
 		Level:      "debug",
@@ -39,7 +39,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// Init 使用自定义配置初始化 logger
+// 使用自定义配置初始化 logger
 func Init(cfg *Config) error {
 	if cfg == nil {
 		cfg = DefaultConfig()
@@ -119,7 +119,7 @@ func init() {
 	}
 }
 
-// Sync 刷新日志缓冲区
+// 刷新日志缓冲区
 func Sync() {
 	if log != nil {
 		log.Sync()
@@ -129,12 +129,12 @@ func Sync() {
 	}
 }
 
-// GetLogger 获取底层 zap.Logger
+// 获取底层 zap.Logger
 func GetLogger() *zap.Logger {
 	return log
 }
 
-// GetSugar 获取 SugaredLogger
+// 获取 SugaredLogger
 func GetSugar() *zap.SugaredLogger {
 	return sugar
 }

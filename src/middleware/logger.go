@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Logger 日志中间件
+// 日志中间件
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		startTime := time.Now()

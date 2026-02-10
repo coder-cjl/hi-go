@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// TransID 为每个请求生成唯一的追踪ID
+// 为每个请求生成唯一的追踪ID
 func TransID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 尝试从请求头获取 TraceID

@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// User 用户模型
+// 用户模型
 type User struct {
 	ID        uint           `gorm:"primarykey" json:"id"`
 	Username  string         `gorm:"type:varchar(50);uniqueIndex;not null" json:"username"`
@@ -21,18 +21,18 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-// TableName 指定表名
+// 指定表名
 func (User) TableName() string {
 	return "users"
 }
 
-// LoginRequest 登录请求
+// 登录请求
 type LoginRequest struct {
 	Username string `json:"username" binding:"required,min=3,max=50"` // 必填，长度3-50
 	Password string `json:"password" binding:"required,min=6"`        // 必填，最小6位
 }
 
-// LoginResponse 登录响应
+// 登录响应
 type LoginResponse struct {
 	User         *User  `json:"user"`
 	AccessToken  string `json:"access_token"`
@@ -40,7 +40,7 @@ type LoginResponse struct {
 	ExpiresIn    int64  `json:"expires_in"` // 过期时间（秒）
 }
 
-// RegisterRequest 注册请求
+// 注册请求
 type RegisterRequest struct {
 	Username string `json:"username" binding:"required,min=3,max=50"`
 	Password string `json:"password" binding:"required,min=6,max=20"`

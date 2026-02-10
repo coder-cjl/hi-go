@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Recovery 错误恢复中间件
+// 错误恢复中间件
 func Recovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {

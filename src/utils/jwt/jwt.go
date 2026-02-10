@@ -28,7 +28,7 @@ type Claims struct {
 	jwt.RegisteredClaims                        // JWT标准声明
 }
 
-// Config JWT配置
+// JWT配置
 type Config struct {
 	SecretKey            string        // 签名密钥
 	AccessTokenDuration  time.Duration // 访问令牌过期时间
@@ -36,7 +36,7 @@ type Config struct {
 	Issuer               string        // 签发者
 }
 
-// DefaultConfig 返回默认配置
+// 返回默认配置
 func DefaultConfig() *Config {
 	return &Config{
 		SecretKey:            "your-secret-key-change-it", // 生产环境请务必修改
@@ -46,12 +46,12 @@ func DefaultConfig() *Config {
 	}
 }
 
-// JWTManager JWT管理器
+// JWT管理器
 type JWTManager struct {
 	config *Config
 }
 
-// Init 使用配置初始化JWT管理器
+// 使用配置初始化JWT管理器
 func Init(cfg *Config) {
 	if cfg == nil {
 		cfg = DefaultConfig()
@@ -59,17 +59,17 @@ func Init(cfg *Config) {
 	Manager = &JWTManager{config: cfg}
 }
 
-// init 自动初始化默认JWT管理器
+// 自动初始化默认JWT管理器
 func init() {
 	Init(DefaultConfig())
 }
 
-// GetManager 获取全局JWT管理器实例
+// 获取全局JWT管理器实例
 func GetManager() *JWTManager {
 	return Manager
 }
 
-// NewJWTManager 创建JWT管理器
+// 创建JWT管理器
 // 参数:
 //   - config: JWT配置，如果为nil则使用默认配置
 //
@@ -82,28 +82,32 @@ func NewJWTManager(config *Config) *JWTManager {
 	return &JWTManager{config: config}
 }
 
-// SetSecretKey 设置签名密钥
+//	设置签名密钥
+//
 // 参数:
 //   - key: 签名密钥
 func (m *JWTManager) SetSecretKey(key string) {
 	m.config.SecretKey = key
 }
 
-// SetAccessTokenDuration 设置访问令牌过期时间
+//	设置访问令牌过期时间
+//
 // 参数:
 //   - duration: 过期时间
 func (m *JWTManager) SetAccessTokenDuration(duration time.Duration) {
 	m.config.AccessTokenDuration = duration
 }
 
-// SetRefreshTokenDuration 设置刷新令牌过期时间
+//	设置刷新令牌过期时间
+//
 // 参数:
 //   - duration: 过期时间
 func (m *JWTManager) SetRefreshTokenDuration(duration time.Duration) {
 	m.config.RefreshTokenDuration = duration
 }
 
-// GenerateToken 生成访问令牌
+//	生成访问令牌
+//
 // 参数:
 //   - userID: 用户ID
 //   - username: 用户名
@@ -136,7 +140,8 @@ func (m *JWTManager) GenerateToken(userID, username string, roles []string, extr
 	return token.SignedString([]byte(m.config.SecretKey))
 }
 
-// GenerateRefreshToken 生成刷新令牌
+//	生成刷新令牌
+//
 // 参数:
 //   - userID: 用户ID
 //
@@ -163,7 +168,8 @@ func (m *JWTManager) GenerateRefreshToken(userID string) (string, error) {
 	return token.SignedString([]byte(m.config.SecretKey))
 }
 
-// GenerateTokenPair 同时生成访问令牌和刷新令牌
+//	同时生成访问令牌和刷新令牌
+//
 // 参数:
 //   - userID: 用户ID
 //   - username: 用户名
@@ -188,7 +194,8 @@ func (m *JWTManager) GenerateTokenPair(userID, username string, roles []string, 
 	return accessToken, refreshToken, nil
 }
 
-// ParseToken 解析并验证token
+//	解析并验证token
+//
 // 参数:
 //   - tokenString: token字符串
 //
@@ -225,7 +232,8 @@ func (m *JWTManager) ParseToken(tokenString string) (*Claims, error) {
 	return nil, ErrTokenInvalid
 }
 
-// ValidateToken 验证token是否有效
+//	验证token是否有效
+//
 // 参数:
 //   - tokenString: token字符串
 //
@@ -240,7 +248,8 @@ func (m *JWTManager) ValidateToken(tokenString string) (bool, error) {
 	return true, nil
 }
 
-// GetUserIDFromToken 从token中提取用户ID
+//	从token中提取用户ID
+//
 // 参数:
 //   - tokenString: token字符串
 //
@@ -255,7 +264,8 @@ func (m *JWTManager) GetUserIDFromToken(tokenString string) (string, error) {
 	return claims.UserID, nil
 }
 
-// IsTokenExpired 检查token是否已过期
+//	检查token是否已过期
+//
 // 参数:
 //   - tokenString: token字符串
 //
@@ -266,7 +276,8 @@ func (m *JWTManager) IsTokenExpired(tokenString string) bool {
 	return errors.Is(err, ErrTokenExpired)
 }
 
-// RefreshAccessToken 使用刷新令牌生成新的访问令牌
+//	使用刷新令牌生成新的访问令牌
+//
 // 参数:
 //   - refreshToken: 刷新令牌
 //   - username: 用户名
@@ -287,7 +298,8 @@ func (m *JWTManager) RefreshAccessToken(refreshToken, username string, roles []s
 	return m.GenerateToken(claims.UserID, username, roles, extra)
 }
 
-// GetClaims 获取token中的所有声明
+//	获取token中的所有声明
+//
 // 参数:
 //   - tokenString: token字符串
 //
@@ -298,7 +310,8 @@ func (m *JWTManager) GetClaims(tokenString string) (*Claims, error) {
 	return m.ParseToken(tokenString)
 }
 
-// HasRole 检查token中是否包含指定角色
+//	检查token中是否包含指定角色
+//
 // 参数:
 //   - tokenString: token字符串
 //   - role: 要检查的角色
@@ -323,52 +336,52 @@ func (m *JWTManager) HasRole(tokenString, role string) (bool, error) {
 // ==================== 全局便捷方法 ====================
 // 以下方法直接使用全局Manager实例，简化调用
 
-// GenerateToken 使用全局管理器生成访问令牌
+// 使用全局管理器生成访问令牌
 func GenerateToken(userID, username string, roles []string, extra map[string]interface{}) (string, error) {
 	return Manager.GenerateToken(userID, username, roles, extra)
 }
 
-// GenerateRefreshToken 使用全局管理器生成刷新令牌
+// 使用全局管理器生成刷新令牌
 func GenerateRefreshToken(userID string) (string, error) {
 	return Manager.GenerateRefreshToken(userID)
 }
 
-// GenerateTokenPair 使用全局管理器同时生成访问令牌和刷新令牌
+// 使用全局管理器同时生成访问令牌和刷新令牌
 func GenerateTokenPair(userID, username string, roles []string, extra map[string]interface{}) (accessToken, refreshToken string, err error) {
 	return Manager.GenerateTokenPair(userID, username, roles, extra)
 }
 
-// ParseToken 使用全局管理器解析并验证token
+// 使用全局管理器解析并验证token
 func ParseToken(tokenString string) (*Claims, error) {
 	return Manager.ParseToken(tokenString)
 }
 
-// ValidateToken 使用全局管理器验证token是否有效
+// 使用全局管理器验证token是否有效
 func ValidateToken(tokenString string) (bool, error) {
 	return Manager.ValidateToken(tokenString)
 }
 
-// GetUserIDFromToken 使用全局管理器从token中提取用户ID
+// 使用全局管理器从token中提取用户ID
 func GetUserIDFromToken(tokenString string) (string, error) {
 	return Manager.GetUserIDFromToken(tokenString)
 }
 
-// IsTokenExpired 使用全局管理器检查token是否已过期
+// 使用全局管理器检查token是否已过期
 func IsTokenExpired(tokenString string) bool {
 	return Manager.IsTokenExpired(tokenString)
 }
 
-// RefreshAccessToken 使用全局管理器刷新访问令牌
+// 使用全局管理器刷新访问令牌
 func RefreshAccessToken(refreshToken, username string, roles []string, extra map[string]interface{}) (string, error) {
 	return Manager.RefreshAccessToken(refreshToken, username, roles, extra)
 }
 
-// GetClaims 使用全局管理器获取token中的所有声明
+// 使用全局管理器获取token中的所有声明
 func GetClaims(tokenString string) (*Claims, error) {
 	return Manager.GetClaims(tokenString)
 }
 
-// HasRole 使用全局管理器检查token中是否包含指定角色
+// 使用全局管理器检查token中是否包含指定角色
 func HasRole(tokenString, role string) (bool, error) {
 	return Manager.HasRole(tokenString, role)
 }

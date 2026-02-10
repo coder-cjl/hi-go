@@ -18,19 +18,19 @@ var (
 	ErrEmailExists        = errors.New("邮箱已存在")
 )
 
-// AuthService 认证服务
+// 认证服务
 type AuthService struct {
 	userRepo *repository.UserRepository
 }
 
-// NewAuthService 创建认证服务实例
+// 创建认证服务实例
 func NewAuthService() *AuthService {
 	return &AuthService{
 		userRepo: repository.NewUserRepository(),
 	}
 }
 
-// Login 用户登录
+// 登录用户
 func (s *AuthService) Login(req *model.LoginRequest) (*model.LoginResponse, error) {
 	// 1. 查找用户
 	user, err := s.userRepo.FindByUsername(req.Username)
@@ -66,7 +66,7 @@ func (s *AuthService) Login(req *model.LoginRequest) (*model.LoginResponse, erro
 	}, nil
 }
 
-// Register 用户注册
+// 注册用户
 func (s *AuthService) Register(req *model.RegisterRequest) (*model.User, error) {
 	// 1. 检查用户名是否存在
 	exists, err := s.userRepo.ExistsByUsername(req.Username)
@@ -111,7 +111,7 @@ func (s *AuthService) Register(req *model.RegisterRequest) (*model.User, error) 
 	return user, nil
 }
 
-// GetUserByID 根据ID获取用户信息
+// 根据ID获取用户信息
 func (s *AuthService) GetUserByID(id uint) (*model.User, error) {
 	user, err := s.userRepo.FindByID(id)
 	if err != nil {
