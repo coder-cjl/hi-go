@@ -116,3 +116,38 @@ func (h *AuthHandler) GetProfile(c *gin.Context) {
 
 	model.Success(c, user)
 }
+
+// UpdateProfile 更新个人信息（占位方法，待实现）
+func (h *AuthHandler) UpdateProfile(c *gin.Context) {
+	model.Success(c, gin.H{"message": "功能开发中"})
+}
+
+// ChangePassword 修改密码（占位方法，待实现）
+func (h *AuthHandler) ChangePassword(c *gin.Context) {
+	model.Success(c, gin.H{"message": "功能开发中"})
+}
+
+// GetUserList 获取用户列表（占位方法，待实现）
+func (h *AuthHandler) GetUserList(c *gin.Context) {
+	model.Success(c, gin.H{"message": "功能开发中"})
+}
+
+// GetUserByID 获取指定用户信息（占位方法，待实现）
+func (h *AuthHandler) GetUserByID(c *gin.Context) {
+	model.Success(c, gin.H{"message": "功能开发中"})
+}
+
+// UpdateUser 更新用户信息（占位方法，待实现）
+func (h *AuthHandler) UpdateUser(c *gin.Context) {
+	model.Success(c, gin.H{"message": "功能开发中"})
+}
+
+// DeleteUser 删除用户（占位方法，待实现）
+func (h *AuthHandler) DeleteUser(c *gin.Context) {
+	model.Success(c, gin.H{"message": "功能开发中"})
+}
+
+// UpdateUserStatus 更新用户状态（占位方法，待实现）
+func (h *AuthHandler) UpdateUserStatus(c *gin.Context) {
+	model.Success(c, gin.H{"message": "功能开发中"})
+}

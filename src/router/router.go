@@ -1,8 +1,8 @@
 package router
 
 import (
-	"hi-go/src/handler"
 	"hi-go/src/middleware"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,32 +18,19 @@ func Setup() *gin.Engine {
 	r.Use(middleware.Logger())   // 日志记录
 	r.Use(middleware.CORS())     // 跨域处理
 
-	// 创建处理器实例
-	authHandler := handler.NewAuthHandler()
+	// 健康检查
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "ok",
+			"message": "服务运行正常",
+		})
+	})
 
-	// 公开路由组
+	// API 路由组
 	api := r.Group("/api")
 	{
-		// 认证相关
-		api.POST("/login", authHandler.Login)       // 登录
-		api.POST("/register", authHandler.Register) // 注册
-
-		// 需要认证的路由
-		authorized := api.Group("")
-		authorized.Use(middleware.JWTAuth()) // JWT 认证中间件
-		{
-			authorized.GET("/profile", authHandler.GetProfile) // 获取个人信息
-
-			// 管理员路由
-			admin := authorized.Group("/admin")
-			admin.Use(middleware.RoleAuth("admin")) // 角色权限检查
-			{
-				// 这里添加管理员专属接口
-				admin.GET("/users", func(c *gin.Context) {
-					c.JSON(200, gin.H{"message": "管理员用户列表"})
-				})
-			}
-		}
+		// 注册各模块路由
+		SetupUserRoutes(api) // 用户模块
 	}
 
 	return r
