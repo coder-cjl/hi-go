@@ -31,7 +31,7 @@ func DefaultConfig() *Config {
 		Level:      "debug",
 		Env:        "dev",
 		Topic:      "LUCA",
-		FilePath:   "logs/app.log",
+		FilePath:   "",
 		MaxSize:    100,
 		MaxBackups: 10,
 		MaxAge:     30,
