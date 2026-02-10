@@ -1,0 +1,44 @@
+{"level":"info","ts":1770624065.633848,"logger":"LUCA","caller":"hi-go/main.go:11","msg":"Application started"}
+{"level":"info","ts":1770626896.449492,"logger":"LUCA","caller":"hi-go/main.go:11","msg":"Application started"}
+{"level":"info","ts":1770631619.793664,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770631619.79498,"logger":"LUCA","caller":"hi-go/main.go:28","msg":"应用启动中..."}
+{"level":"info","ts":1770631619.946399,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770631619.946524,"logger":"LUCA","caller":"hi-go/main.go:38","msg":"服务启动","port":":8080"}
+{"level":"info","ts":1770631632.473387,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.000215792,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770631639.4913762,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.000096125,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770631923.268238,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770631923.281481,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
+{"level":"info","ts":1770631923.298789,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770631923.2989042,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770631938.76753,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770631938.776109,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
+{"level":"info","ts":1770631938.796556,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770631938.796939,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770631963.616437,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770631963.619313,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
+{"level":"info","ts":1770631963.639103,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770631963.639207,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770631985.1374478,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770631985.13809,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
+{"level":"info","ts":1770631985.149405,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770631985.149478,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770632006.272151,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770632006.28775,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
+{"level":"info","ts":1770632006.305423,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770632006.305517,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770632026.922432,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.002436875,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770632026.93615,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.0012455,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770632154.785613,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770632154.78707,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
+{"level":"info","ts":1770632154.801664,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770632154.8017778,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770632167.2738838,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.000155625,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770632167.322945,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.000073292,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770632167.346055,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"HEAD","path":"/health","query":"","status":404,"duration":0.000000541,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770632239.3295941,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770632239.330844,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
+{"level":"info","ts":1770632239.344516,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770632239.344633,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770632252.413135,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.000156375,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770632252.4616692,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.000094833,"client_ip":"::1","user_agent":"curl/8.7.1"}
+{"level":"info","ts":1770632252.487593,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"GET","path":"/health","query":"","status":200,"duration":0.000028042,"client_ip":"::1","user_agent":"curl/8.7.1"}
