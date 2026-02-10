@@ -1,11 +1,14 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"hi-go/src/model"
 	"hi-go/src/repository"
 	"hi-go/src/utils/jwt"
+	"hi-go/src/utils/redis"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -60,6 +63,14 @@ func (s *AuthService) Login(req *model.LoginRequest) (*model.LoginResponse, erro
 		return nil, err
 	}
 
+	// 5. 要将accessToken信息存储到redis中，方便后续验证和刷新token时使用
+	redisKey := fmt.Sprintf("jwt:access_token:%s", userID)
+	err = redis.Set(context.Background(), redisKey, accessToken, 7200*time.Second) // 设置过期时间与 JWT 配置一致
+	if err != nil {
+		return nil, err
+	}
+
+	// 6. 返回登录响应
 	return &model.LoginResponse{
 		User:         user,
 		AccessToken:  accessToken,
