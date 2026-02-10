@@ -26,7 +26,7 @@ type Config struct {
 // DefaultConfig 默认配置
 func DefaultConfig() *Config {
 	return &Config{
-		DSN:             "root:123456@~!@tcp(localhost:3306)/dev?charset=utf8mb4&parseTime=True&loc=Local",
+		DSN:             "root:123456@~!@tcp(localhost:3306)/mysql-dev?charset=utf8mb4&parseTime=True&loc=Local",
 		MaxOpenConns:    100,
 		MaxIdleConns:    10,
 		ConnMaxLifetime: time.Hour,
