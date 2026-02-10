@@ -76,3 +76,9 @@
 {"level":"info","ts":1770712362.345818,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
 {"level":"info","ts":1770712362.367002,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
 {"level":"info","ts":1770712362.36716,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770713317.868789,"logger":"LUCA","caller":"mysql/mysql.go:62","msg":"MySQL 连接成功"}
+{"level":"info","ts":1770713317.8699079,"logger":"LUCA","caller":"hi-go/main.go:40","msg":"应用启动中..."}
+{"level":"info","ts":1770713317.907945,"logger":"LUCA","caller":"hi-go/main.go:22","msg":"数据库迁移成功"}
+{"level":"info","ts":1770713317.908134,"logger":"LUCA","caller":"hi-go/main.go:30","msg":"服务启动","port":":8000"}
+{"level":"info","ts":1770714933.2725859,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"POST","path":"/api/login","query":"","status":401,"duration":12.593635667,"client_ip":"127.0.0.1","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"}
+{"level":"info","ts":1770715156.291268,"logger":"LUCA","caller":"middleware/logger.go:21","msg":"HTTP 请求","method":"POST","path":"/api/register","query":"","status":200,"duration":0.098606958,"client_ip":"127.0.0.1","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"}
