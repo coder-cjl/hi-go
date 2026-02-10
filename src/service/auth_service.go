@@ -50,7 +50,9 @@ func (s *AuthService) Login(req *model.LoginRequest) (*model.LoginResponse, erro
 
 	// 4. 生成 JWT Token
 	userID := fmt.Sprintf("%d", user.ID)
-	roles := []string{"user"} // 可以从数据库获取角色
+
+	// 可以从数据库获取角色列表，这里简化为固定角色
+	roles := []string{"user"}
 
 	// 使用 GenerateTokenPair 生成 access token 和 refresh token
 	accessToken, refreshToken, err := jwt.GenerateTokenPair(userID, user.Username, roles, nil)
