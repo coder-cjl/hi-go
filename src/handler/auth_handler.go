@@ -3,6 +3,7 @@ package handler
 import (
 	"hi-go/src/model"
 	"hi-go/src/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -93,25 +94,25 @@ func (h *AuthHandler) GetProfile(c *gin.Context) {
 		return
 	}
 
+	// 将 string 类型的 userID 转换为 uint
+	userIDStr, ok := userID.(string)
+	if !ok {
+		model.ParamError(c, "用户ID格式错误")
+		return
+	}
+
+	userIDUint, err := strconv.ParseUint(userIDStr, 10, 32)
+	if err != nil {
+		model.ParamError(c, "用户ID无效")
+		return
+	}
+
 	// 获取用户信息
-	user, err := h.authService.GetUserByID(userID.(uint))
+	user, err := h.authService.GetUserByID(uint(userIDUint))
 	if err != nil {
 		model.NotFound(c, err.Error())
 		return
 	}
 
 	model.Success(c, user)
-}
-
-// Health 健康检查接口
-// @Summary 服务健康检查
-// @Description 检查服务是否正常运行
-// @Tags 系统
-// @Produce json
-// @Success 200 {object} model.Resp
-// @Router /health [get]
-func (h *AuthHandler) Health(c *gin.Context) {
-	model.SuccessWithMessage(c, "服务运行正常", gin.H{
-		"status": "ok",
-	})
 }

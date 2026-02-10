@@ -46,10 +46,5 @@ func Setup() *gin.Engine {
 		}
 	}
 
-	// 健康检查
-	r.GET("/health", func(c *gin.Context) {
-		handler.NewAuthHandler().Health(c)
-	})
-
 	return r
 }
