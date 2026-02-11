@@ -43,17 +43,24 @@ const (
 
 // 业务配置常量
 const (
-	//  默认分页大小
+	// DefaultPageSize 默认分页大小
 	DefaultPageSize = 20
 
-	//  最大分页大小
+	// MaxPageSize 最大分页大小
 	MaxPageSize = 100
 
-	//  密码最小长度
+	// PasswordMinLength 密码最小长度
 	PasswordMinLength = 6
 
-	//  用户名最小长度
+	// UsernameMinLength 用户名最小长度
 	UsernameMinLength = 3
+)
+
+// Snowflake 配置常量
+const (
+	// SnowflakeMachineID 机器ID（0-1023）
+	// 在分布式环境中，每个实例应该有不同的机器ID
+	SnowflakeMachineID = 1
 )
 
 // 获取 JWT Access Token 过期时间（time.Duration）

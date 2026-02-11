@@ -71,21 +71,21 @@ func (h *AuthHandler) GetProfile(c *gin.Context) {
 		return
 	}
 
-	// 将 string 类型的 userID 转换为 uint
+	// 将 string 类型的 userID 转换为 int64
 	userIDStr, ok := userID.(string)
 	if !ok {
 		model.ParamError(c, "用户ID格式错误")
 		return
 	}
 
-	userIDUint, err := strconv.ParseUint(userIDStr, 10, 32)
+	userIDInt64, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil {
 		model.ParamError(c, "用户ID无效")
 		return
 	}
 
 	// 获取用户信息
-	user, err := h.authService.GetUserByID(uint(userIDUint))
+	user, err := h.authService.GetUserByID(userIDInt64)
 	if err != nil {
 		model.NotFound(c, err.Error())
 		return

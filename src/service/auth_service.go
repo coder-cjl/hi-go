@@ -9,6 +9,7 @@ import (
 	"hi-go/src/repository"
 	"hi-go/src/utils/jwt"
 	"hi-go/src/utils/redis"
+	"hi-go/src/utils/snowflake"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -107,8 +108,15 @@ func (s *AuthService) Register(req *model.RegisterRequest) (*model.User, error) 
 		return nil, err
 	}
 
-	// 4. 创建用户
+	// 4. 生成雪花ID
+	userID, err := snowflake.Generate()
+	if err != nil {
+		return nil, fmt.Errorf("生成用户ID失败: %w", err)
+	}
+
+	// 5. 创建用户
 	user := &model.User{
+		ID:       userID, // 使用雪花ID
 		Username: req.Username,
 		Password: string(hashedPassword),
 		Email:    req.Email,
@@ -124,8 +132,8 @@ func (s *AuthService) Register(req *model.RegisterRequest) (*model.User, error) 
 	return user, nil
 }
 
-// 根据ID获取用户信息
-func (s *AuthService) GetUserByID(id uint) (*model.User, error) {
+// GetUserByID 根据ID获取用户信息
+func (s *AuthService) GetUserByID(id int64) (*model.User, error) {
 	user, err := s.userRepo.FindByID(id)
 	if err != nil {
 		return nil, ErrUserNotFound

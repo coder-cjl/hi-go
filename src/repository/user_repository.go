@@ -23,8 +23,8 @@ func (r *UserRepository) FindByUsername(username string) (*model.User, error) {
 	return &user, nil
 }
 
-// 根据ID查找用户
-func (r *UserRepository) FindByID(id uint) (*model.User, error) {
+// FindByID 根据ID查找用户
+func (r *UserRepository) FindByID(id int64) (*model.User, error) {
 	var user model.User
 	err := mysql.Database.First(&user, id).Error
 	if err != nil {

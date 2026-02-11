@@ -6,9 +6,9 @@ import (
 	"gorm.io/gorm"
 )
 
-// 用户模型
+// User 用户模型
 type User struct {
-	ID        uint           `gorm:"primarykey" json:"id"`
+	ID        int64          `gorm:"primarykey;autoIncrement:false" json:"id"` // 使用雪花ID，禁用自增
 	Username  string         `gorm:"type:varchar(50);uniqueIndex;not null" json:"username"`
 	Password  string         `gorm:"type:varchar(255);not null" json:"-"` // json:"-" 表示不返回密码
 	Email     string         `gorm:"type:varchar(100);uniqueIndex" json:"email"`
