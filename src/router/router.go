@@ -26,6 +26,8 @@ func Setup() *gin.Engine {
 	{
 		// 用户模块路由
 		SetupUserRoutes(api)
+		// 首页模块路由
+		SetupHomeRoutes(api)
 	}
 
 	return r

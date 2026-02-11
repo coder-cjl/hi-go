@@ -1,0 +1,22 @@
+package router
+
+import (
+	"hi-go/src/handler"
+
+	"github.com/gin-gonic/gin"
+)
+
+// 设置首页模块路由
+func SetupHomeRoutes(r *gin.RouterGroup) {
+	// 创建处理器实例
+	homeHandler := handler.NewHomeHandler()
+
+	// 首页模块路由组
+	home := r.Group("/home")
+	{
+		// 获取首页列表（不需要认证）
+		home.GET("/list", homeHandler.List)
+		// 创建模拟数据（不需要认证）
+		home.POST("/create", homeHandler.Create)
+	}
+}
