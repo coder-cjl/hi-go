@@ -1,0 +1,369 @@
+basePath: /api
+definitions:
+  model.Home:
+    properties:
+      created_at:
+        description: 创建时间
+        type: string
+      description:
+        description: 描述
+        type: string
+      id:
+        type: integer
+      image_url:
+        description: 图片URL
+        type: string
+      link:
+        description: 链接
+        type: string
+      sort:
+        description: 排序（越小越靠前）
+        type: integer
+      status:
+        description: 状态：1-启用 0-禁用
+        type: integer
+      title:
+        description: 标题
+        type: string
+      updated_at:
+        description: 更新时间
+        type: string
+    type: object
+  model.HomeListResponse:
+    properties:
+      list:
+        description: 列表数据
+        items:
+          $ref: '#/definitions/model.Home'
+        type: array
+      total:
+        description: 总数
+        type: integer
+    type: object
+  model.HomeUpdateRequest:
+    properties:
+      description:
+        description: 描述
+        maxLength: 500
+        type: string
+      image_url:
+        description: 图片URL
+        maxLength: 500
+        type: string
+      link:
+        description: 链接
+        maxLength: 500
+        type: string
+      sort:
+        description: 排序
+        minimum: 0
+        type: integer
+      status:
+        description: 状态
+        enum:
+        - 0
+        - 1
+        type: integer
+      title:
+        description: 标题
+        maxLength: 200
+        type: string
+    type: object
+  model.LoginRequest:
+    properties:
+      password:
+        description: 必填，最小6位
+        minLength: 6
+        type: string
+      username:
+        description: 必填，长度3-50
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  model.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        description: 过期时间（秒）
+        type: integer
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+    type: object
+  model.RegisterRequest:
+    properties:
+      email:
+        type: string
+      nickname:
+        maxLength: 50
+        type: string
+      password:
+        maxLength: 20
+        minLength: 6
+        type: string
+      phone:
+        type: string
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  model.Response:
+    properties:
+      code:
+        description: 业务状态码
+        example: 0
+        type: integer
+      data:
+        description: 响应数据
+      message:
+        description: 提示信息
+        example: success
+        type: string
+      trace_id:
+        description: 事务ID
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+    type: object
+  model.User:
+    properties:
+      avatar:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        description: 使用雪花ID，禁用自增
+        type: integer
+      nickname:
+        type: string
+      phone:
+        type: string
+      status:
+        type: integer
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+  description: Hi-Go 项目的 RESTful API 接口文档
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Hi-Go API 文档
+  version: "1.0"
+paths:
+  /home/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 根据ID更新首页内容信息
+      parameters:
+      - description: 首页内容ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.HomeUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新成功
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: 参数错误
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: 记录不存在
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: 服务器错误
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: 更新首页内容
+      tags:
+      - 首页模块
+  /home/create:
+    post:
+      consumes:
+      - application/json
+      description: 自动生成30条模拟首页数据，用于测试
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建成功
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: 服务器错误
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: 创建模拟首页数据
+      tags:
+      - 首页模块
+  /home/list:
+    get:
+      consumes:
+      - application/json
+      description: 分页获取首页内容列表，包括标题、描述、图片等信息
+      parameters:
+      - description: 页码（默认1）
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量（默认20，最大100）
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.HomeListResponse'
+              type: object
+        "400":
+          description: 参数错误
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: 服务器错误
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: 获取首页内容列表
+      tags:
+      - 首页模块
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户通过用户名和密码登录，返回用户信息和 JWT Token
+      parameters:
+      - description: 登录请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 登录成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.LoginResponse'
+              type: object
+        "400":
+          description: 参数错误
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: 认证失败
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: 用户登录
+      tags:
+      - 认证模块
+  /user/profile:
+    get:
+      consumes:
+      - application/json
+      description: 获取当前登录用户的详细信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+        "401":
+          description: 未授权
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: 用户不存在
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - BearerAuth: []
+      summary: 获取当前用户信息
+      tags:
+      - 认证模块
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: 创建新用户账号
+      parameters:
+      - description: 注册请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 注册成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+        "400":
+          description: 参数错误
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: 用户注册
+      tags:
+      - 认证模块
+securityDefinitions:
+  BearerAuth:
+    description: JWT 认证，格式：Bearer {token}
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

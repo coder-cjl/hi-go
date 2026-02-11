@@ -62,3 +62,40 @@ func (s *HomeService) CreateMockData() error {
 	// 批量插入数据库
 	return s.homeRepo.BatchCreate(homes)
 }
+
+// Update 更新首页内容
+func (s *HomeService) Update(id int64, req *model.HomeUpdateRequest) error {
+	// 1. 检查记录是否存在
+	_, err := s.homeRepo.FindByID(id)
+	if err != nil {
+		return fmt.Errorf("首页内容不存在")
+	}
+
+	// 2. 构建更新数据
+	updates := make(map[string]interface{})
+	if req.Title != "" {
+		updates["title"] = req.Title
+	}
+	if req.Description != "" {
+		updates["description"] = req.Description
+	}
+	if req.ImageURL != "" {
+		updates["image_url"] = req.ImageURL
+	}
+	if req.Link != "" {
+		updates["link"] = req.Link
+	}
+	if req.Sort != nil {
+		updates["sort"] = *req.Sort
+	}
+	if req.Status != nil {
+		updates["status"] = *req.Status
+	}
+
+	// 3. 执行更新
+	if len(updates) == 0 {
+		return fmt.Errorf("没有需要更新的字段")
+	}
+
+	return s.homeRepo.Update(id, updates)
+}

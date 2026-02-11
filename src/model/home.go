@@ -31,3 +31,13 @@ type HomeListResponse struct {
 	List  []Home `json:"list"`  // 列表数据
 	Total int64  `json:"total"` // 总数
 }
+
+// HomeUpdateRequest 首页更新请求
+type HomeUpdateRequest struct {
+	Title       string `json:"title" binding:"omitempty,max=200"`       // 标题
+	Description string `json:"description" binding:"omitempty,max=500"` // 描述
+	ImageURL    string `json:"image_url" binding:"omitempty,max=500"`   // 图片URL
+	Link        string `json:"link" binding:"omitempty,max=500"`        // 链接
+	Sort        *int   `json:"sort" binding:"omitempty,min=0"`          // 排序
+	Status      *int   `json:"status" binding:"omitempty,oneof=0 1"`    // 状态
+}

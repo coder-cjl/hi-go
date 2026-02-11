@@ -7,7 +7,15 @@ import (
 	"github.com/google/uuid"
 )
 
-// 统一响应结构
+// Response 统一响应结构（用于Swagger文档）
+type Response struct {
+	TraceID string      `json:"trace_id" example:"550e8400-e29b-41d4-a716-446655440000"` // 事务ID
+	Code    int         `json:"code" example:"0"`                                        // 业务状态码
+	Message string      `json:"message" example:"success"`                               // 提示信息
+	Data    interface{} `json:"data,omitempty"`                                          // 响应数据
+}
+
+// Resp 统一响应结构（实际使用）
 type Resp struct {
 	TraceID string      `json:"trace_id"`       // 事务ID，用于追踪请求
 	Code    int         `json:"code"`           // 业务状态码：0-成功，其他-失败

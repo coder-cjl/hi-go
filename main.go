@@ -14,6 +14,25 @@ import (
 	"go.uber.org/zap"
 )
 
+// @title           Hi-Go API 文档
+// @version         1.0
+// @description     Hi-Go 项目的 RESTful API 接口文档
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.email  support@example.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8000
+// @BasePath  /api
+
+// @securityDefinitions.apikey  BearerAuth
+// @in                          header
+// @name                        Authorization
+// @description					JWT 认证，格式：Bearer {token}
+
 // initConfig 初始化配置
 func initConfig() {
 	// 从环境变量 GO_ENV 读取环境，默认为 dev

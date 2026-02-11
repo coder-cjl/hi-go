@@ -18,5 +18,7 @@ func SetupHomeRoutes(r *gin.RouterGroup) {
 		home.GET("/list", homeHandler.List)
 		// 创建模拟数据（不需要认证）
 		home.POST("/create", homeHandler.Create)
+		// 更新首页内容（不需要认证）
+		home.PUT("/:id", homeHandler.Update)
 	}
 }

@@ -56,3 +56,8 @@ func (r *HomeRepository) Create(home *model.Home) error {
 func (r *HomeRepository) BatchCreate(homes []model.Home) error {
 	return mysql.Database.Create(&homes).Error
 }
+
+// Update 更新首页内容
+func (r *HomeRepository) Update(id int64, updates map[string]interface{}) error {
+	return mysql.Database.Model(&model.Home{}).Where("id = ?", id).Updates(updates).Error
+}
