@@ -19,7 +19,7 @@ func initConfig() {
 	// 从环境变量 GO_ENV 读取环境，默认为 dev
 	env := config.GetEnv()
 	if err := config.Init(env); err != nil {
-		panic(fmt.Sprintf("配置初始化失败: %v", err))
+		logger.Fatalf("配置初始化失败: %v", err)
 	}
 	// 更新向后兼容的变量
 	config.UpdateLegacyVars()
@@ -44,7 +44,7 @@ func initLogger() {
 		Compress:   config.Config.Log.Compress,
 	}
 	if err := logger.Init(cfg); err != nil {
-		panic(fmt.Sprintf("日志初始化失败: %v", err))
+		logger.Fatalf("日志初始化失败: %v", err)
 	}
 	defer logger.Sync()
 	logger.Info("日志初始化成功",

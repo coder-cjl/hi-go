@@ -1,10 +1,12 @@
 package config
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
+
+	"hi-go/src/utils/logger"
 )
 
 // Config 全局配置实例
@@ -30,13 +32,15 @@ func Init(env string) error {
 
 	// 读取配置文件
 	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("读取配置文件失败: %w", err)
+		logger.Error("读取配置文件失败", zap.Error(err))
+		return err
 	}
 
 	// 将配置解析到结构体
 	Config = &AppConfig{}
 	if err := viper.Unmarshal(Config); err != nil {
-		return fmt.Errorf("解析配置文件失败: %w", err)
+		logger.Error("解析配置文件失败", zap.Error(err))
+		return err
 	}
 
 	return nil
