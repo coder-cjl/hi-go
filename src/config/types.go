@@ -9,6 +9,7 @@ type AppConfig struct {
 	Snowflake SnowflakeConfig `mapstructure:"snowflake"`
 	Business  BusinessConfig  `mapstructure:"business"`
 	Log       LogConfig       `mapstructure:"log"`
+	YApi      YApiConfig      `mapstructure:"yapi"`
 }
 
 // ServerConfig 服务器配置
@@ -70,4 +71,12 @@ type LogConfig struct {
 	MaxBackups int    `mapstructure:"max_backups"`
 	MaxAge     int    `mapstructure:"max_age"`
 	Compress   bool   `mapstructure:"compress"`
+}
+
+// YApiConfig YApi配置
+type YApiConfig struct {
+	Enabled   bool   `mapstructure:"enabled"`    // 是否启用同步
+	ServerURL string `mapstructure:"server_url"` // YApi服务器地址
+	ProjectID string `mapstructure:"project_id"` // 项目ID
+	Token     string `mapstructure:"token"`      // 项目 Token
 }

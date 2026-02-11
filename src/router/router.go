@@ -4,10 +4,6 @@ import (
 	"hi-go/src/middleware"
 
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-
-	_ "hi-go/docs" // 引入生成的docs包
 )
 
 // 设置所有路由
@@ -25,8 +21,8 @@ func Setup() *gin.Engine {
 	// 跨域处理
 	r.Use(middleware.CORS())
 
-	// Swagger 文档路由
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// 设置 API 文档路由
+	SetupDocsRoutes(r)
 
 	// API 路由组
 	api := r.Group("/api")

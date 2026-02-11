@@ -40,7 +40,15 @@ business:
 
 log:
   level: debug  # debug, info, warn, error
+  filename: logs/dev.log
   max_size: 10      # 每个日志文件最大大小（MB）
   max_backups: 5    # 保留旧日志文件的最大个数
   max_age: 30       # 保留旧日志文件的最大天数
   compress: false   # 是否压缩归档日志文件
+
+# YApi 自动同步配置（可选）
+yapi:
+  enabled: true  # 是否启用自动同步到 YApi（true/false）
+  server_url: http://127.0.0.1:3000  # YApi 服务器地址
+  project_id: "11"  # YApi 项目 ID
+  token: "7e3e79abf65d86174ef76059c4fe1297191fff202a928e153b89a21e08debe73"       # YApi 项目 Token（在项目设置-token配置中获取）

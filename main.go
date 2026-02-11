@@ -10,6 +10,7 @@ import (
 	"hi-go/src/utils/mysql"
 	"hi-go/src/utils/redis"
 	"hi-go/src/utils/snowflake"
+	"hi-go/src/utils/yapi"
 
 	"go.uber.org/zap"
 )
@@ -134,6 +135,13 @@ func initDB() {
 	logger.Info("数据库迁移成功")
 }
 
+// initYApiSync 同步 Swagger 文档到 YApi
+func initYApiSync() {
+	if err := yapi.SyncToYApi(); err != nil {
+		logger.Warn("YApi 同步失败，但不影响服务启动", zap.Error(err))
+	}
+}
+
 // initRouter 初始化路由并启动服务
 func initRouter() {
 	r := router.Setup()
@@ -174,6 +182,9 @@ func main() {
 	// 7. 初始化数据库（迁移表结构）
 	initDB()
 
-	// 8. 设置路由并启动服务
+	// 8. 同步 Swagger 文档到 YApi（可选）
+	initYApiSync()
+
+	// 9. 设置路由并启动服务
 	initRouter()
 }
