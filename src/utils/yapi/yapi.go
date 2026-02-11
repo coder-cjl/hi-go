@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -54,10 +55,17 @@ func SyncToYApi() error {
 		return fmt.Errorf("读取 swagger.json 失败: %w", err)
 	}
 
+	// 预处理 Swagger JSON，展开 allOf 引用，避免 YApi 混淆
+	processedSwagger, err := PreprocessSwaggerForYApi(swaggerData)
+	if err != nil {
+		logger.Error("预处理 Swagger 文档失败", zap.Error(err))
+		return fmt.Errorf("预处理 Swagger 文档失败: %w", err)
+	}
+
 	// 构建导入请求
 	importReq := YApiImportRequest{
 		Type:      "swagger",
-		JSON:      string(swaggerData),
+		JSON:      processedSwagger,
 		Token:     config.Config.YApi.Token,
 		MergeMode: "normal", // 使用普通模式，完全覆盖旧接口，确保文档最新
 	}
@@ -108,4 +116,168 @@ func SyncToYApi() error {
 	logger.Info("成功同步 Swagger 文档到 YApi",
 		zap.String("server_url", config.Config.YApi.ServerURL))
 	return nil
+}
+
+// PreprocessSwaggerForYApi 预处理 Swagger JSON，展开 allOf 引用
+// 解决 YApi 导入时将所有 allOf 定义混合的问题
+func PreprocessSwaggerForYApi(swaggerData []byte) (string, error) {
+	var swagger map[string]interface{}
+	if err := json.Unmarshal(swaggerData, &swagger); err != nil {
+		return "", err
+	}
+
+	paths, ok := swagger["paths"].(map[string]interface{})
+	if !ok {
+		return string(swaggerData), nil
+	}
+
+	definitions, ok := swagger["definitions"].(map[string]interface{})
+	if !ok {
+		return string(swaggerData), nil
+	}
+
+	// 遍历所有路径和响应，展开 allOf 引用
+	for pathKey, pathItem := range paths {
+		pathMap, ok := pathItem.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		for methodKey, method := range pathMap {
+			methodMap, ok := method.(map[string]interface{})
+			if !ok {
+				continue
+			}
+
+			responses, ok := methodMap["responses"].(map[string]interface{})
+			if !ok {
+				continue
+			}
+
+			for statusCode, response := range responses {
+				respMap, ok := response.(map[string]interface{})
+				if !ok {
+					continue
+				}
+
+				schema, ok := respMap["schema"].(map[string]interface{})
+				if !ok {
+					continue
+				}
+
+				// 展开 allOf 并为每个接口创建唯一的定义
+				if hasAllOf(schema) {
+					// 生成唯一的定义名称：路径_方法_状态码_Response
+					// 例如：UserLogin200Response, UserProfile200Response
+					defName := generateUniqueDefName(pathKey, methodKey, statusCode)
+
+					// 展开 allOf 生成完整定义
+					expandedSchema := expandAllOfInline(schema, definitions)
+
+					// 将展开后的定义添加到 definitions 中
+					definitions[defName] = expandedSchema
+
+					// 替换响应 schema 为引用
+					respMap["schema"] = map[string]interface{}{
+						"$ref": "#/definitions/" + defName,
+					}
+				}
+			}
+		}
+	}
+
+	// 重新序列化
+	processedData, err := json.Marshal(swagger)
+	if err != nil {
+		return "", err
+	}
+
+	return string(processedData), nil
+}
+
+// generateUniqueDefName 为接口生成唯一的定义名称
+func generateUniqueDefName(path, method, statusCode string) string {
+	// 清理路径，生成可读的名称
+	// /user/login -> UserLogin
+	// /home/list -> HomeList
+	name := path
+	name = strings.ReplaceAll(name, "/", " ")
+	name = strings.TrimSpace(name)
+	name = strings.ReplaceAll(name, " ", "")
+	name = strings.Title(name)
+
+	// 添加方法和状态码
+	return name + strings.Title(method) + statusCode + "Response"
+}
+
+// hasAllOf 检查 schema 是否包含 allOf
+func hasAllOf(schema map[string]interface{}) bool {
+	_, ok := schema["allOf"]
+	return ok
+}
+
+// expandAllOfInline 展开 allOf 返回完整的 schema
+func expandAllOfInline(schema map[string]interface{}, definitions map[string]interface{}) map[string]interface{} {
+	allOf, ok := schema["allOf"].([]interface{})
+	if !ok || len(allOf) == 0 {
+		return schema
+	}
+
+	// 合并所有 allOf 中的属性
+	mergedProps := make(map[string]interface{})
+	var mergedRequired []interface{}
+	mergedType := "object"
+
+	for _, item := range allOf {
+		itemMap, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		// 处理 $ref 引用
+		if ref, hasRef := itemMap["$ref"].(string); hasRef {
+			// 解析引用，如 "#/definitions/model.Response"
+			refName := strings.TrimPrefix(ref, "#/definitions/")
+			refDef, ok := definitions[refName].(map[string]interface{})
+			if ok {
+				if props, ok := refDef["properties"].(map[string]interface{}); ok {
+					for k, v := range props {
+						mergedProps[k] = v
+					}
+				}
+				if req, ok := refDef["required"].([]interface{}); ok {
+					mergedRequired = append(mergedRequired, req...)
+				}
+				if t, ok := refDef["type"].(string); ok && t != "" {
+					mergedType = t
+				}
+			}
+		}
+
+		// 合并直接定义的属性
+		if props, ok := itemMap["properties"].(map[string]interface{}); ok {
+			for k, v := range props {
+				mergedProps[k] = v
+			}
+		}
+		if req, ok := itemMap["required"].([]interface{}); ok {
+			mergedRequired = append(mergedRequired, req...)
+		}
+		if t, ok := itemMap["type"].(string); ok && t != "" {
+			mergedType = t
+		}
+	}
+
+	// 构建新的 schema
+	result := map[string]interface{}{
+		"type": mergedType,
+	}
+	if len(mergedProps) > 0 {
+		result["properties"] = mergedProps
+	}
+	if len(mergedRequired) > 0 {
+		result["required"] = mergedRequired
+	}
+
+	return result
 }

@@ -85,7 +85,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.HomeListData"
+                                            "$ref": "#/definitions/model.HomeListDataResponse"
                                         }
                                     }
                                 }
@@ -202,7 +202,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.LoginData"
+                                            "$ref": "#/definitions/model.LoginDataResponse"
                                         }
                                     }
                                 }
@@ -370,7 +370,7 @@
                 }
             }
         },
-        "model.HomeListData": {
+        "model.HomeListDataResponse": {
             "type": "object",
             "properties": {
                 "list": {
@@ -424,7 +424,7 @@
                 }
             }
         },
-        "model.LoginData": {
+        "model.LoginDataResponse": {
             "type": "object",
             "properties": {
                 "access_token": {

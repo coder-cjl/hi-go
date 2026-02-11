@@ -91,7 +91,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.HomeListData"
+                                            "$ref": "#/definitions/model.HomeListDataResponse"
                                         }
                                     }
                                 }
@@ -208,7 +208,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.LoginData"
+                                            "$ref": "#/definitions/model.LoginDataResponse"
                                         }
                                     }
                                 }
@@ -376,7 +376,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.HomeListData": {
+        "model.HomeListDataResponse": {
             "type": "object",
             "properties": {
                 "list": {
@@ -430,7 +430,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.LoginData": {
+        "model.LoginDataResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
