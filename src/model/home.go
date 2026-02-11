@@ -26,8 +26,8 @@ type HomeListRequest struct {
 	PageSize int `form:"page_size" binding:"omitempty,min=1"` // 每页数量
 }
 
-// HomeListData 首页列表data字段
-type HomeListData struct {
+// HomeListDataResponse 首页列表data字段
+type HomeListDataResponse struct {
 	List  []Home `json:"list"`  // 列表数据
 	Total int64  `json:"total"` // 总数
 }

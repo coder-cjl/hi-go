@@ -35,7 +35,7 @@ func NewAuthService() *AuthService {
 }
 
 // 登录用户
-func (s *AuthService) Login(req *model.LoginRequest) (*model.LoginData, error) {
+func (s *AuthService) Login(req *model.LoginRequest) (*model.LoginDataResponse, error) {
 	// 1. 查找用户
 	user, err := s.userRepo.FindByUsername(req.Username)
 	if err != nil {
@@ -72,7 +72,7 @@ func (s *AuthService) Login(req *model.LoginRequest) (*model.LoginData, error) {
 	}
 
 	// 6. 返回登录响应
-	return &model.LoginData{
+	return &model.LoginDataResponse{
 		User:         user,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,

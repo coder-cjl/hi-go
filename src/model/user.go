@@ -32,8 +32,8 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required,min=6"`        // 必填，最小6位
 }
 
-// LoginData 登录响应数据字段
-type LoginData struct {
+// LoginDataResponse 登录响应数据字段
+type LoginDataResponse struct {
 	User         *User  `json:"user"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`

@@ -28,7 +28,7 @@ func NewHomeHandler() *HomeHandler {
 // @Produce      json
 // @Param        page       query     int  false  "页码（默认1）"
 // @Param        page_size  query     int  false  "每页数量（默认20，最大100）"
-// @Success      200        {object}  model.Response{data=model.HomeListData}  "获取成功"
+// @Success      200        {object}  model.Response{data=model.HomeListDataResponse}  "获取成功"
 // @Failure      400        {object}  model.Response  "参数错误"
 // @Failure      500        {object}  model.Response  "服务器错误"
 // @Router       /home/list [get]
