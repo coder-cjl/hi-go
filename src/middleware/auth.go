@@ -1,11 +1,16 @@
 package middleware
 
 import (
+	"context"
+	"fmt"
 	"hi-go/src/model"
 	"hi-go/src/utils/jwt"
+	"hi-go/src/utils/logger"
+	redisutil "hi-go/src/utils/redis"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 // 认证中间件
@@ -37,12 +42,44 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 
-		// 4. 将用户信息存入上下文
+		// 4. 检查 Redis 中是否存在该 token（防止 token 过期或被删除）
+		redisKey := fmt.Sprintf("jwt:access_token:%s", claims.UserID)
+		storedToken, err := redisutil.Get(context.Background(), redisKey)
+		if err != nil {
+			// Redis 中找不到 token，说明已过期或被主动删除
+			if err == redisutil.ErrKeyNotFound {
+				logger.Warn("Token已过期或不存在",
+					zap.String("user_id", claims.UserID),
+					zap.String("redis_key", redisKey))
+				model.Unauthorized(c, "Token 已过期，请重新登录")
+				c.Abort()
+				return
+			}
+			// Redis 查询出错
+			logger.Error("Redis查询失败",
+				zap.String("user_id", claims.UserID),
+				zap.Error(err))
+			model.Unauthorized(c, "Token 验证失败")
+			c.Abort()
+			return
+		}
+
+		// 5. 验证 Redis 中的 token 与请求的 token 是否一致
+		if storedToken != tokenString {
+			logger.Warn("Token不匹配",
+				zap.String("user_id", claims.UserID),
+				zap.String("redis_key", redisKey))
+			model.Unauthorized(c, "Token 无效，请重新登录")
+			c.Abort()
+			return
+		}
+
+		// 6. 将用户信息存入上下文
 		c.Set("userID", claims.UserID)
 		c.Set("username", claims.Username)
 		c.Set("roles", claims.Roles)
 
-		// 5. 继续处理请求
+		// 7. 继续处理请求
 		c.Next()
 	}
 }

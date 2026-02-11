@@ -2,6 +2,7 @@ package router
 
 import (
 	"hi-go/src/handler"
+	"hi-go/src/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,6 +14,7 @@ func SetupHomeRoutes(r *gin.RouterGroup) {
 
 	// 首页模块路由组
 	home := r.Group("/home")
+	home.Use(middleware.JWTAuth())
 	{
 		// 获取首页列表（不需要认证）
 		home.GET("/list", homeHandler.List)
