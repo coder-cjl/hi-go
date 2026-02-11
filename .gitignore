@@ -11,6 +11,9 @@
 # Output of the go coverage tool
 *.out
 
+# Debug binaries
+__debug_bin*
+
 # Go workspace file
 go.work
 
