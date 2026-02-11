@@ -64,12 +64,6 @@ func Init(cfg *Config) error {
 	return nil
 }
 
-func init() {
-	if err := Init(DefaultConfig()); err != nil {
-		logger.Error("MySQL 初始化失败", zap.Error(err))
-	}
-}
-
 // ==================== 连接管理 ====================
 
 // 获取数据库实例

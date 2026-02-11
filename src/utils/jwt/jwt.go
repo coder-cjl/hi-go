@@ -60,11 +60,6 @@ func Init(cfg *Config) {
 	Manager = &JWTManager{config: cfg}
 }
 
-// 自动初始化默认JWT管理器
-func init() {
-	Init(DefaultConfig())
-}
-
 // 获取全局JWT管理器实例
 func GetManager() *JWTManager {
 	return Manager

@@ -84,13 +84,6 @@ func Init(cfg *Config) error {
 	return nil
 }
 
-// 自动初始化默认Redis客户端
-func init() {
-	if err := Init(DefaultConfig()); err != nil {
-		logger.Error("Redis 初始化失败", zap.Error(err))
-	}
-}
-
 // 获取全局Redis客户端
 func GetClient() *redis.Client {
 	return Client

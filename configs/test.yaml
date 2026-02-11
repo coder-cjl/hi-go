@@ -1,0 +1,47 @@
+# 测试环境配置
+server:
+  port: 8000
+  mode: debug
+
+jwt:
+  secret_key: test-secret-key-change-it
+  issuer: hi-go-app
+  access_token_duration: 7200
+  refresh_token_duration: 604800
+
+database:
+  host: test-mysql-server
+  port: 3306
+  username: test_user
+  password: test_password
+  dbname: hi_go_test
+  charset: utf8mb4
+  max_open_conns: 80
+  max_idle_conns: 10
+  conn_max_lifetime: 3600
+  conn_max_idle_time: 600
+
+redis:
+  host: test-redis-server
+  port: 6379
+  password: ""
+  db: 0
+  token_ttl: 7200
+  session_ttl: 86400
+
+snowflake:
+  machine_id: 2
+
+business:
+  default_page_size: 20
+  max_page_size: 100
+  password_min_length: 6
+  username_min_length: 3
+
+log:
+  level: info
+  filename: logs/test.log
+  max_size: 20
+  max_backups: 10
+  max_age: 30
+  compress: true

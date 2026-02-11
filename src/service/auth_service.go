@@ -76,7 +76,7 @@ func (s *AuthService) Login(req *model.LoginRequest) (*model.LoginResponse, erro
 		User:         user,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    config.JWTAccessTokenDuration, // 使用配置常量
+		ExpiresIn:    int64(config.JWTAccessTokenDuration), // 使用配置常量
 	}, nil
 }
 

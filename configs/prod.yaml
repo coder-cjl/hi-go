@@ -1,0 +1,47 @@
+# 生产环境配置
+server:
+  port: 8000
+  mode: release
+
+jwt:
+  secret_key: prod-secret-key-must-change-it  # 生产环境必须修改
+  issuer: hi-go-app
+  access_token_duration: 7200
+  refresh_token_duration: 604800
+
+database:
+  host: prod-mysql-server
+  port: 3306
+  username: prod_user
+  password: prod_password  # 生产环境建议使用环境变量
+  dbname: hi_go_prod
+  charset: utf8mb4
+  max_open_conns: 200
+  max_idle_conns: 20
+  conn_max_lifetime: 3600
+  conn_max_idle_time: 600
+
+redis:
+  host: prod-redis-server
+  port: 6379
+  password: ""  # 生产环境建议使用环境变量
+  db: 0
+  token_ttl: 7200
+  session_ttl: 86400
+
+snowflake:
+  machine_id: 4
+
+business:
+  default_page_size: 20
+  max_page_size: 100
+  password_min_length: 8
+  username_min_length: 3
+
+log:
+  level: warn
+  filename: logs/prod.log
+  max_size: 100
+  max_backups: 30
+  max_age: 90
+  compress: true

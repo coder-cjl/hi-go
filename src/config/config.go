@@ -1,84 +1,59 @@
 package config
 
-import "time"
+import (
+	"fmt"
+	"os"
 
-// JWT 配置常量
-const (
-	//  访问令牌过期时间（秒）
-	JWTAccessTokenDuration = 7200 // 2小时
-
-	//  刷新令牌过期时间（秒）
-	JWTRefreshTokenDuration = 604800 // 7天
-
-	// 签名密钥（生产环境应使用环境变量）
-	JWTSecretKey = "your-secret-key-change-it"
-
-	//  JWT 签发者
-	JWTIssuer = "hi-go-app"
+	"github.com/spf13/viper"
 )
 
-// Redis 配置常量
-const (
-	//  Token 在 Redis 中的过期时间（秒）
-	RedisTokenTTL = JWTAccessTokenDuration // 与 JWT 过期时间一致
+// Config 全局配置实例
+var Config *AppConfig
 
-	//  会话在 Redis 中的过期时间（秒）
-	RedisSessionTTL = 86400 // 24小时
-)
+// Init 初始化配置
+// env 参数指定环境：dev, test, uat, prod
+// 如果 env 为空，则从环境变量 GO_ENV 读取，默认为 dev
+func Init(env string) error {
+	if env == "" {
+		env = GetEnv()
+	}
 
-// 数据库配置常量
-const (
-	//  最大打开连接数
-	DBMaxOpenConns = 100
+	// 设置配置文件
+	viper.SetConfigName(env)
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./configs")
+	viper.AddConfigPath("../configs")
+	viper.AddConfigPath("../../configs")
 
-	//  最大空闲连接数
-	DBMaxIdleConns = 10
+	// 允许环境变量覆盖配置文件
+	viper.AutomaticEnv()
 
-	//  连接最大存活时间
-	DBConnMaxLifetime = time.Hour
+	// 读取配置文件
+	if err := viper.ReadInConfig(); err != nil {
+		return fmt.Errorf("读取配置文件失败: %w", err)
+	}
 
-	// 空闲连接最大存活时间
-	DBConnMaxIdleTime = 10 * time.Minute
-)
+	// 将配置解析到结构体
+	Config = &AppConfig{}
+	if err := viper.Unmarshal(Config); err != nil {
+		return fmt.Errorf("解析配置文件失败: %w", err)
+	}
 
-// 业务配置常量
-const (
-	// DefaultPageSize 默认分页大小
-	DefaultPageSize = 20
-
-	// MaxPageSize 最大分页大小
-	MaxPageSize = 100
-
-	// PasswordMinLength 密码最小长度
-	PasswordMinLength = 6
-
-	// UsernameMinLength 用户名最小长度
-	UsernameMinLength = 3
-)
-
-// Snowflake 配置常量
-const (
-	// SnowflakeMachineID 机器ID（0-1023）
-	// 在分布式环境中，每个实例应该有不同的机器ID
-	SnowflakeMachineID = 1
-)
-
-// 获取 JWT Access Token 过期时间（time.Duration）
-func GetJWTAccessTokenDuration() time.Duration {
-	return time.Duration(JWTAccessTokenDuration) * time.Second
+	return nil
 }
 
-// 获取 JWT Refresh Token 过期时间（time.Duration）
-func GetJWTRefreshTokenDuration() time.Duration {
-	return time.Duration(JWTRefreshTokenDuration) * time.Second
+// GetEnv 获取当前运行环境
+// 从环境变量 GO_ENV 读取，默认为 dev
+func GetEnv() string {
+	env := os.Getenv("GO_ENV")
+	if env == "" {
+		return "dev"
+	}
+	return env
 }
 
-// 获取 Redis Token TTL（time.Duration）
-func GetRedisTokenTTL() time.Duration {
-	return time.Duration(RedisTokenTTL) * time.Second
-}
-
-// 获取 Redis Session TTL（time.Duration）
-func GetRedisSessionTTL() time.Duration {
-	return time.Duration(RedisSessionTTL) * time.Second
+// Reload 重新加载配置
+// 用于运行时热更新配置
+func Reload() error {
+	return Init(GetEnv())
 }

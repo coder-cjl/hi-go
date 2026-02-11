@@ -1,0 +1,53 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# Dependency directories
+vendor/
+
+# Build output
+hi-go
+/hi-go
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Log files
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Production config (optional, uncomment if you don't want to commit prod config)
+# configs/prod.yaml
+
+# Local config overrides (if you create them)
+configs/local.yaml
+configs/*.local.yaml
