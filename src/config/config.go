@@ -4,74 +4,74 @@ import "time"
 
 // JWT 配置常量
 const (
-	// JWTAccessTokenDuration 访问令牌过期时间（秒）
+	//  访问令牌过期时间（秒）
 	JWTAccessTokenDuration = 7200 // 2小时
 
-	// JWTRefreshTokenDuration 刷新令牌过期时间（秒）
+	//  刷新令牌过期时间（秒）
 	JWTRefreshTokenDuration = 604800 // 7天
 
-	// JWTSecretKey JWT 签名密钥（生产环境应使用环境变量）
+	// 签名密钥（生产环境应使用环境变量）
 	JWTSecretKey = "your-secret-key-change-it"
 
-	// JWTIssuer JWT 签发者
+	//  JWT 签发者
 	JWTIssuer = "hi-go-app"
 )
 
 // Redis 配置常量
 const (
-	// RedisTokenTTL Token 在 Redis 中的过期时间（秒）
+	//  Token 在 Redis 中的过期时间（秒）
 	RedisTokenTTL = JWTAccessTokenDuration // 与 JWT 过期时间一致
 
-	// RedisSessionTTL 会话在 Redis 中的过期时间（秒）
+	//  会话在 Redis 中的过期时间（秒）
 	RedisSessionTTL = 86400 // 24小时
 )
 
 // 数据库配置常量
 const (
-	// DBMaxOpenConns 最大打开连接数
+	//  最大打开连接数
 	DBMaxOpenConns = 100
 
-	// DBMaxIdleConns 最大空闲连接数
+	//  最大空闲连接数
 	DBMaxIdleConns = 10
 
-	// DBConnMaxLifetime 连接最大存活时间
+	//  连接最大存活时间
 	DBConnMaxLifetime = time.Hour
 
-	// DBConnMaxIdleTime 空闲连接最大存活时间
+	// 空闲连接最大存活时间
 	DBConnMaxIdleTime = 10 * time.Minute
 )
 
 // 业务配置常量
 const (
-	// DefaultPageSize 默认分页大小
+	//  默认分页大小
 	DefaultPageSize = 20
 
-	// MaxPageSize 最大分页大小
+	//  最大分页大小
 	MaxPageSize = 100
 
-	// PasswordMinLength 密码最小长度
+	//  密码最小长度
 	PasswordMinLength = 6
 
-	// UsernameMinLength 用户名最小长度
+	//  用户名最小长度
 	UsernameMinLength = 3
 )
 
-// GetJWTAccessTokenDuration 获取 JWT Access Token 过期时间（time.Duration）
+// 获取 JWT Access Token 过期时间（time.Duration）
 func GetJWTAccessTokenDuration() time.Duration {
 	return time.Duration(JWTAccessTokenDuration) * time.Second
 }
 
-// GetJWTRefreshTokenDuration 获取 JWT Refresh Token 过期时间（time.Duration）
+// 获取 JWT Refresh Token 过期时间（time.Duration）
 func GetJWTRefreshTokenDuration() time.Duration {
 	return time.Duration(JWTRefreshTokenDuration) * time.Second
 }
 
-// GetRedisTokenTTL 获取 Redis Token TTL（time.Duration）
+// 获取 Redis Token TTL（time.Duration）
 func GetRedisTokenTTL() time.Duration {
 	return time.Duration(RedisTokenTTL) * time.Second
 }
 
-// GetRedisSessionTTL 获取 Redis Session TTL（time.Duration）
+// 获取 Redis Session TTL（time.Duration）
 func GetRedisSessionTTL() time.Duration {
 	return time.Duration(RedisSessionTTL) * time.Second
 }
