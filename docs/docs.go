@@ -91,7 +91,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.HomeListResponse"
+                                            "$ref": "#/definitions/model.HomeListData"
                                         }
                                     }
                                 }
@@ -114,7 +114,7 @@ const docTemplate = `{
             }
         },
         "/home/{id}": {
-            "put": {
+            "post": {
                 "description": "根据ID更新首页内容信息",
                 "consumes": [
                     "application/json"
@@ -208,7 +208,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.LoginResponse"
+                                            "$ref": "#/definitions/model.LoginData"
                                         }
                                     }
                                 }
@@ -376,7 +376,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.HomeListResponse": {
+        "model.HomeListData": {
             "type": "object",
             "properties": {
                 "list": {
@@ -430,6 +430,24 @@ const docTemplate = `{
                 }
             }
         },
+        "model.LoginData": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "expires_in": {
+                    "description": "过期时间（秒）",
+                    "type": "integer"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                }
+            }
+        },
         "model.LoginRequest": {
             "type": "object",
             "required": [
@@ -447,24 +465,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 3
-                }
-            }
-        },
-        "model.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "expires_in": {
-                    "description": "过期时间（秒）",
-                    "type": "integer"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/model.User"
                 }
             }
         },

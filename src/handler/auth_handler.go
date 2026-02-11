@@ -27,7 +27,7 @@ func NewAuthHandler() *AuthHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      model.LoginRequest   true  "登录请求参数"
-// @Success      200      {object}  model.Response{data=model.LoginResponse}  "登录成功"
+// @Success      200      {object}  model.Response{data=model.LoginData}  "登录成功"
 // @Failure      400      {object}  model.Response  "参数错误"
 // @Failure      401      {object}  model.Response  "认证失败"
 // @Router       /user/login [post]

@@ -19,24 +19,23 @@ func SetupDocsRoutes(r *gin.Engine) {
 		c.String(200, `<!DOCTYPE html>
 <html>
 <head>
-    <title>Hi-Go API 文档</title>
+    <title>API 文档 - Redoc</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
     <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
+        body { margin: 0; padding: 0; }
     </style>
 </head>
 <body>
     <redoc spec-url='/docs/swagger.json'></redoc>
-    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
 </body>
 </html>`)
 	})
 
 	// 提供 swagger.json 文件访问
-	r.StaticFile("/docs/swagger.json", "./docs/swagger.json")
+	r.GET("/docs/swagger.json", func(c *gin.Context) {
+		c.File("./docs/swagger.json")
+	})
 }

@@ -29,7 +29,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-  model.HomeListResponse:
+  model.HomeListData:
     properties:
       list:
         description: 列表数据
@@ -69,6 +69,18 @@ definitions:
         maxLength: 200
         type: string
     type: object
+  model.LoginData:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        description: 过期时间（秒）
+        type: integer
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+    type: object
   model.LoginRequest:
     properties:
       password:
@@ -83,18 +95,6 @@ definitions:
     required:
     - password
     - username
-    type: object
-  model.LoginResponse:
-    properties:
-      access_token:
-        type: string
-      expires_in:
-        description: 过期时间（秒）
-        type: integer
-      refresh_token:
-        type: string
-      user:
-        $ref: '#/definitions/model.User'
     type: object
   model.RegisterRequest:
     properties:
@@ -170,7 +170,7 @@ info:
   version: "1.0"
 paths:
   /home/{id}:
-    put:
+    post:
       consumes:
       - application/json
       description: 根据ID更新首页内容信息
@@ -251,7 +251,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/model.HomeListResponse'
+                  $ref: '#/definitions/model.HomeListData'
               type: object
         "400":
           description: 参数错误
@@ -286,7 +286,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/model.LoginResponse'
+                  $ref: '#/definitions/model.LoginData'
               type: object
         "400":
           description: 参数错误

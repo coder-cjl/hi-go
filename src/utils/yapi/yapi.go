@@ -44,7 +44,7 @@ func SyncToYApi() error {
 		return nil
 	}
 
-	logger.Info("开始同步 Swagger 文档到 YApi",
+	logger.Info("开始同步 Swagger 文档到 YApi（覆盖模式）",
 		zap.String("server_url", config.Config.YApi.ServerURL))
 
 	// 读取 swagger.json 文件
@@ -59,7 +59,7 @@ func SyncToYApi() error {
 		Type:      "swagger",
 		JSON:      string(swaggerData),
 		Token:     config.Config.YApi.Token,
-		MergeMode: "merge", // 使用合并模式，不会删除已有接口
+		MergeMode: "normal", // 使用普通模式，完全覆盖旧接口，确保文档最新
 	}
 
 	// 序列化请求数据

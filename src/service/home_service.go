@@ -20,7 +20,7 @@ func NewHomeService() *HomeService {
 }
 
 // 获取首页列表
-func (s *HomeService) GetList(req *model.HomeListRequest) (*model.HomeListResponse, error) {
+func (s *HomeService) GetList(req *model.HomeListRequest) (*model.HomeListData, error) {
 	// 设置默认分页参数
 	if req.Page <= 0 {
 		req.Page = 1
@@ -38,7 +38,7 @@ func (s *HomeService) GetList(req *model.HomeListRequest) (*model.HomeListRespon
 		return nil, err
 	}
 
-	return &model.HomeListResponse{
+	return &model.HomeListData{
 		List:  list,
 		Total: total,
 	}, nil

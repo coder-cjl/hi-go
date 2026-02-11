@@ -15,14 +15,6 @@ type Response struct {
 	Data    interface{} `json:"data,omitempty"`                                          // 响应数据
 }
 
-// Resp 统一响应结构（实际使用）
-type Resp struct {
-	TraceID string      `json:"trace_id"`       // 事务ID，用于追踪请求
-	Code    int         `json:"code"`           // 业务状态码：0-成功，其他-失败
-	Message string      `json:"message"`        // 提示信息
-	Data    interface{} `json:"data,omitempty"` // 响应数据
-}
-
 // 业务状态码定义
 const (
 	CodeSuccess      = 0    // 成功
@@ -54,7 +46,7 @@ func GetTraceID(c *gin.Context) string {
 
 // 成功响应
 func Success(c *gin.Context, data interface{}) {
-	c.JSON(http.StatusOK, Resp{
+	c.JSON(http.StatusOK, Response{
 		TraceID: GetTraceID(c),
 		Code:    CodeSuccess,
 		Message: "success",
@@ -64,7 +56,7 @@ func Success(c *gin.Context, data interface{}) {
 
 // 成功响应（自定义消息）
 func SuccessWithMessage(c *gin.Context, message string, data interface{}) {
-	c.JSON(http.StatusOK, Resp{
+	c.JSON(http.StatusOK, Response{
 		TraceID: GetTraceID(c),
 		Code:    CodeSuccess,
 		Message: message,
@@ -74,7 +66,7 @@ func SuccessWithMessage(c *gin.Context, message string, data interface{}) {
 
 // 错误响应
 func Error(c *gin.Context, httpCode int, businessCode int, message string) {
-	c.JSON(httpCode, Resp{
+	c.JSON(httpCode, Response{
 		TraceID: GetTraceID(c),
 		Code:    businessCode,
 		Message: message,
@@ -83,7 +75,7 @@ func Error(c *gin.Context, httpCode int, businessCode int, message string) {
 
 // 错误响应（带数据）
 func ErrorWithData(c *gin.Context, httpCode int, businessCode int, message string, data interface{}) {
-	c.JSON(httpCode, Resp{
+	c.JSON(httpCode, Response{
 		TraceID: GetTraceID(c),
 		Code:    businessCode,
 		Message: message,
