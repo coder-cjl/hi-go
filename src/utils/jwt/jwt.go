@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"errors"
+	"hi-go/src/config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -39,10 +40,10 @@ type Config struct {
 // 返回默认配置
 func DefaultConfig() *Config {
 	return &Config{
-		SecretKey:            "your-secret-key-change-it", // 生产环境请务必修改
-		AccessTokenDuration:  15 * time.Minute,            // 访问令牌15分钟
-		RefreshTokenDuration: 7 * 24 * time.Hour,          // 刷新令牌7天
-		Issuer:               "hi-go-app",
+		SecretKey:            config.JWTSecretKey,                 // 使用配置常量
+		AccessTokenDuration:  config.GetJWTAccessTokenDuration(),  // 访问令牌
+		RefreshTokenDuration: config.GetJWTRefreshTokenDuration(), // 刷新令牌
+		Issuer:               config.JWTIssuer,                    // 签发者
 	}
 }
 

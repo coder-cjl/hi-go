@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"errors"
+	"hi-go/src/config"
 	"hi-go/src/utils/logger"
 	"time"
 
@@ -27,10 +28,10 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		DSN:             "root:123456@~!@tcp(localhost:3306)/dev?charset=utf8mb4&parseTime=True&loc=Local",
-		MaxOpenConns:    100,
-		MaxIdleConns:    10,
-		ConnMaxLifetime: time.Hour,
-		ConnMaxIdleTime: 10 * time.Minute,
+		MaxOpenConns:    config.DBMaxOpenConns,
+		MaxIdleConns:    config.DBMaxIdleConns,
+		ConnMaxLifetime: config.DBConnMaxLifetime,
+		ConnMaxIdleTime: config.DBConnMaxIdleTime,
 	}
 }
 
