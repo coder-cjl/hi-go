@@ -10,24 +10,24 @@ jwt:
   refresh_token_duration: 604800
 
 database:
-  host: test-mysql-server
+  host: localhost
   port: 3306
-  username: test_user
-  password: test_password
-  dbname: hi_go_test
+  username: root
+  password: 123456@~!
+  dbname: test
   charset: utf8mb4
-  max_open_conns: 80
+  max_open_conns: 50
   max_idle_conns: 10
-  conn_max_lifetime: 3600
-  conn_max_idle_time: 600
+  conn_max_lifetime: 3600  # 1小时（秒）
+  conn_max_idle_time: 600  # 10分钟（秒）
 
 redis:
-  host: test-redis-server
+  host: localhost
   port: 6379
   password: ""
   db: 0
-  token_ttl: 7200
-  session_ttl: 86400
+  token_ttl: 7200    # 与 JWT 过期时间一致（秒）
+  session_ttl: 86400 # 24小时（秒）
 
 snowflake:
   machine_id: 2
@@ -45,3 +45,10 @@ log:
   max_backups: 10
   max_age: 30
   compress: true
+
+# YApi 自动同步配置（可选）
+yapi:
+  enabled: true  # 是否启用自动同步到 YApi（true/false）
+  server_url: http://127.0.0.1:3000  # YApi 服务器地址
+  project_id: "11"  # YApi 项目 ID
+  token: "7e3e79abf65d86174ef76059c4fe1297191fff202a928e153b89a21e08debe73"       # YApi 项目 Token（在项目设置-token配置中获取）
