@@ -46,6 +46,16 @@ log:
   max_age: 30
   compress: true
 
+# Elasticsearch 日志配置
+elasticsearch:
+  enabled: false  # 测试环境可选
+  addrs:
+    - http://localhost:9200
+  username: ""
+  password: ""
+  index: "hi-go-logs-test"
+  max_retry: 3
+
 # YApi 自动同步配置（可选）
 yapi:
   enabled: true  # 是否启用自动同步到 YApi（true/false）

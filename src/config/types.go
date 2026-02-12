@@ -2,14 +2,15 @@ package config
 
 // AppConfig 应用配置结构体
 type AppConfig struct {
-	Server    ServerConfig    `mapstructure:"server"`
-	JWT       JWTConfig       `mapstructure:"jwt"`
-	Database  DatabaseConfig  `mapstructure:"database"`
-	Redis     RedisConfig     `mapstructure:"redis"`
-	Snowflake SnowflakeConfig `mapstructure:"snowflake"`
-	Business  BusinessConfig  `mapstructure:"business"`
-	Log       LogConfig       `mapstructure:"log"`
-	YApi      YApiConfig      `mapstructure:"yapi"`
+	Server        ServerConfig        `mapstructure:"server"`
+	JWT           JWTConfig           `mapstructure:"jwt"`
+	Database      DatabaseConfig      `mapstructure:"database"`
+	Redis         RedisConfig         `mapstructure:"redis"`
+	Snowflake     SnowflakeConfig     `mapstructure:"snowflake"`
+	Business      BusinessConfig      `mapstructure:"business"`
+	Log           LogConfig           `mapstructure:"log"`
+	Elasticsearch ElasticsearchConfig `mapstructure:"elasticsearch"`
+	YApi          YApiConfig          `mapstructure:"yapi"`
 }
 
 // ServerConfig 服务器配置
@@ -71,6 +72,16 @@ type LogConfig struct {
 	MaxBackups int    `mapstructure:"max_backups"`
 	MaxAge     int    `mapstructure:"max_age"`
 	Compress   bool   `mapstructure:"compress"`
+}
+
+// ElasticsearchConfig Elasticsearch配置
+type ElasticsearchConfig struct {
+	Enabled  bool     `mapstructure:"enabled"`   // 是否启用 Elasticsearch 日志
+	Addrs    []string `mapstructure:"addrs"`     // ES 集群地址
+	Username string   `mapstructure:"username"`  // 用户名（可选）
+	Password string   `mapstructure:"password"`  // 密码（可选）
+	Index    string   `mapstructure:"index"`     // 索引名称
+	MaxRetry int      `mapstructure:"max_retry"` // 最大重试次数
 }
 
 // YApiConfig YApi配置

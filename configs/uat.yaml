@@ -45,3 +45,13 @@ log:
   max_backups: 20
   max_age: 60
   compress: true
+
+# Elasticsearch 日志配置
+elasticsearch:
+  enabled: true  # UAT环境建议启用
+  addrs:
+    - http://uat-es-server:9200
+  username: "es_user"
+  password: "es_password"
+  index: "hi-go-logs-uat"
+  max_retry: 3

@@ -62,6 +62,15 @@ func initLogger() {
 		MaxBackups: config.Config.Log.MaxBackups,
 		MaxAge:     config.Config.Log.MaxAge,
 		Compress:   config.Config.Log.Compress,
+		// Elasticsearch 配置
+		ESEnabled:   config.Config.Elasticsearch.Enabled,
+		ESAddrs:     config.Config.Elasticsearch.Addrs,
+		ESUsername:  config.Config.Elasticsearch.Username,
+		ESPassword:  config.Config.Elasticsearch.Password,
+		ESIndex:     config.Config.Elasticsearch.Index,
+		ESMaxRetry:  config.Config.Elasticsearch.MaxRetry,
+		ESBatchSize: 100, // 默认批量大小
+		ESFlushTime: 5,   // 默认5秒刷新一次
 	}
 	if err := logger.Init(cfg); err != nil {
 		logger.Fatalf("日志初始化失败: %v", err)
@@ -69,7 +78,8 @@ func initLogger() {
 	defer logger.Sync()
 	logger.Info("日志初始化成功",
 		zap.String("level", cfg.Level),
-		zap.String("file", cfg.FilePath))
+		zap.String("file", cfg.FilePath),
+		zap.Bool("es_enabled", cfg.ESEnabled))
 }
 
 // initMySQL 初始化MySQL数据库

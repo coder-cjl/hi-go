@@ -3,14 +3,17 @@ package logger
 import (
 	"os"
 
+	"hi-go/src/utils/elasticsearch"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var (
-	log   *zap.Logger
-	sugar *zap.SugaredLogger
+	log      *zap.Logger
+	sugar    *zap.SugaredLogger
+	esWriter *elasticsearch.ESWriter
 )
 
 // 日志配置结构
@@ -23,19 +26,37 @@ type Config struct {
 	MaxBackups int    // 保留的旧日志文件数量
 	MaxAge     int    // 保留的旧日志文件最大天数
 	Compress   bool   // 是否压缩旧日志
+
+	// Elasticsearch 配置
+	ESEnabled   bool     // 是否启用 Elasticsearch
+	ESAddrs     []string // ES 集群地址
+	ESUsername  string   // ES 用户名
+	ESPassword  string   // ES 密码
+	ESIndex     string   // ES 索引名称
+	ESMaxRetry  int      // ES 最大重试次数
+	ESBatchSize int      // ES 批量写入大小
+	ESFlushTime int      // ES 刷新间隔（秒）
 }
 
 // 默认配置
 func DefaultConfig() *Config {
 	return &Config{
-		Level:      "debug",
-		Env:        "dev",
-		Topic:      "LUCA",
-		FilePath:   "",
-		MaxSize:    100,
-		MaxBackups: 10,
-		MaxAge:     30,
-		Compress:   false,
+		Level:       "debug",
+		Env:         "dev",
+		Topic:       "LUCA",
+		FilePath:    "",
+		MaxSize:     100,
+		MaxBackups:  10,
+		MaxAge:      30,
+		Compress:    false,
+		ESEnabled:   false,
+		ESAddrs:     []string{},
+		ESUsername:  "",
+		ESPassword:  "",
+		ESIndex:     "logs",
+		ESMaxRetry:  3,
+		ESBatchSize: 100,
+		ESFlushTime: 5,
 	}
 }
 
@@ -98,6 +119,33 @@ func Init(cfg *Config) error {
 		cores = append(cores, fileCore)
 	}
 
+	// Elasticsearch 输出（如果启用）
+	if cfg.ESEnabled && len(cfg.ESAddrs) > 0 {
+		esConfig := &elasticsearch.Config{
+			Addrs:     cfg.ESAddrs,
+			Username:  cfg.ESUsername,
+			Password:  cfg.ESPassword,
+			Index:     cfg.ESIndex,
+			MaxRetry:  cfg.ESMaxRetry,
+			BatchSize: cfg.ESBatchSize,
+			FlushTime: cfg.ESFlushTime,
+		}
+
+		var err error
+		esWriter, err = elasticsearch.NewESWriter(esConfig)
+		if err != nil {
+			// 如果 ES 连接失败，记录错误但不中断初始化
+			os.Stderr.WriteString("Failed to initialize Elasticsearch writer: " + err.Error() + "\n")
+		} else {
+			esCore := zapcore.NewCore(
+				zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
+				zapcore.AddSync(esWriter),
+				level,
+			)
+			cores = append(cores, esCore)
+		}
+	}
+
 	// 组合多个 Core
 	core := zapcore.NewTee(cores...)
 
@@ -126,6 +174,17 @@ func Sync() {
 	}
 	if sugar != nil {
 		sugar.Sync()
+	}
+	if esWriter != nil {
+		esWriter.Sync()
+	}
+}
+
+// Close 关闭 logger 并刷新所有日志
+func Close() {
+	Sync()
+	if esWriter != nil {
+		esWriter.Close()
 	}
 }
 

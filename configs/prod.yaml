@@ -45,3 +45,13 @@ log:
   max_backups: 30
   max_age: 90
   compress: true
+
+# Elasticsearch 日志配置
+elasticsearch:
+  enabled: true  # 生产环境建议启用
+  addrs:
+    - http://prod-es-server:9200  # Elasticsearch 集群地址
+  username: "es_user"      # 用户名
+  password: "es_password"  # 密码（建议使用环境变量）
+  index: "hi-go-logs-prod"  # 索引名称
+  max_retry: 3      # 最大重试次数

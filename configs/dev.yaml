@@ -48,6 +48,16 @@ log:
   max_age: 30       # 保留旧日志文件的最大天数
   compress: false   # 是否压缩归档日志文件
 
+# Elasticsearch 日志配置
+elasticsearch:
+  enabled: true  # 是否启用 Elasticsearch 日志（true/false）
+  addrs:
+    - http://localhost:9200  # Elasticsearch 集群地址
+  username: ""      # 用户名（可选）
+  password: ""      # 密码（可选）
+  index: "hi-go-logs"  # 索引名称
+  max_retry: 3      # 最大重试次数
+
 # YApi 自动同步配置（可选）
 yapi:
   enabled: true  # 是否启用自动同步到 YApi（true/false）
