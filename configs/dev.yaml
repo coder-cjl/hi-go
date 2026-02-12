@@ -10,7 +10,7 @@ jwt:
   refresh_token_duration: 604800 # 7天（秒）
 
 database:
-  host: localhost
+  host: host.docker.internal  # Docker 容器访问宿主机
   port: 3306
   username: root
   password: 123456@~!
@@ -22,7 +22,7 @@ database:
   conn_max_idle_time: 600  # 10分钟（秒）
 
 redis:
-  host: localhost
+  host: host.docker.internal  # Docker 容器访问宿主机
   port: 6379
   password: ""
   db: 0
