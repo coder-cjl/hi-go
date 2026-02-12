@@ -56,6 +56,16 @@ elasticsearch:
   index: "hi-go-logs-test"
   max_retry: 3
 
+# Logstash 日志集收配置
+logstash:
+  enabled: false
+  host: localhost
+  port: 5000
+  protocol: tcp
+  timeout: 5
+  reconnect: true
+  buffer_size: 8192
+
 # YApi 自动同步配置（可选）
 yapi:
   enabled: true  # 是否启用自动同步到 YApi（true/false）

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"hi-go/src/utils/elasticsearch"
+	"hi-go/src/utils/logstash"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -11,9 +12,10 @@ import (
 )
 
 var (
-	log      *zap.Logger
-	sugar    *zap.SugaredLogger
-	esWriter *elasticsearch.ESWriter
+	log            *zap.Logger
+	sugar          *zap.SugaredLogger
+	esWriter       *elasticsearch.ESWriter
+	logstashWriter *logstash.Writer
 )
 
 // 日志配置结构
@@ -36,27 +38,43 @@ type Config struct {
 	ESMaxRetry  int      // ES 最大重试次数
 	ESBatchSize int      // ES 批量写入大小
 	ESFlushTime int      // ES 刷新间隔（秒）
+
+	// Logstash 配置
+	LogstashEnabled    bool   // 是否启用 Logstash
+	LogstashHost       string // Logstash 服务器地址
+	LogstashPort       int    // Logstash TCP 端口
+	LogstashProtocol   string // 协议：tcp 或 udp
+	LogstashTimeout    int    // 连接超时（秒）
+	LogstashReconnect  bool   // 是否自动重连
+	LogstashBufferSize int    // 缓冲区大小
 }
 
 // 默认配置
 func DefaultConfig() *Config {
 	return &Config{
-		Level:       "debug",
-		Env:         "dev",
-		Topic:       "LUCA",
-		FilePath:    "",
-		MaxSize:     100,
-		MaxBackups:  10,
-		MaxAge:      30,
-		Compress:    false,
-		ESEnabled:   false,
-		ESAddrs:     []string{},
-		ESUsername:  "",
-		ESPassword:  "",
-		ESIndex:     "logs",
-		ESMaxRetry:  3,
-		ESBatchSize: 100,
-		ESFlushTime: 5,
+		Level:              "debug",
+		Env:                "dev",
+		Topic:              "LUCA",
+		FilePath:           "",
+		MaxSize:            100,
+		MaxBackups:         10,
+		MaxAge:             30,
+		Compress:           false,
+		ESEnabled:          false,
+		ESAddrs:            []string{},
+		ESUsername:         "",
+		ESPassword:         "",
+		ESIndex:            "logs",
+		ESMaxRetry:         3,
+		ESBatchSize:        100,
+		ESFlushTime:        5,
+		LogstashEnabled:    false,
+		LogstashHost:       "localhost",
+		LogstashPort:       5000,
+		LogstashProtocol:   "tcp",
+		LogstashTimeout:    5,
+		LogstashReconnect:  true,
+		LogstashBufferSize: 8192,
 	}
 }
 
@@ -146,6 +164,32 @@ func Init(cfg *Config) error {
 		}
 	}
 
+	// Logstash 输出（如果启用）
+	if cfg.LogstashEnabled && cfg.LogstashHost != "" {
+		logstashConfig := &logstash.Config{
+			Host:       cfg.LogstashHost,
+			Port:       cfg.LogstashPort,
+			Protocol:   cfg.LogstashProtocol,
+			Timeout:    cfg.LogstashTimeout,
+			Reconnect:  cfg.LogstashReconnect,
+			BufferSize: cfg.LogstashBufferSize,
+		}
+
+		var err error
+		logstashWriter, err = logstash.NewWriter(logstashConfig)
+		if err != nil {
+			// 如果 Logstash 连接失败，记录错误但不中断初始化
+			os.Stderr.WriteString("Failed to initialize Logstash writer: " + err.Error() + "\n")
+		} else {
+			logstashCore := zapcore.NewCore(
+				zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
+				zapcore.AddSync(logstashWriter),
+				level,
+			)
+			cores = append(cores, logstashCore)
+		}
+	}
+
 	// 组合多个 Core
 	core := zapcore.NewTee(cores...)
 
@@ -178,6 +222,9 @@ func Sync() {
 	if esWriter != nil {
 		esWriter.Sync()
 	}
+	if logstashWriter != nil {
+		logstashWriter.Sync()
+	}
 }
 
 // Close 关闭 logger 并刷新所有日志
@@ -185,6 +232,9 @@ func Close() {
 	Sync()
 	if esWriter != nil {
 		esWriter.Close()
+	}
+	if logstashWriter != nil {
+		logstashWriter.Close()
 	}
 }
 

@@ -10,6 +10,7 @@ type AppConfig struct {
 	Business      BusinessConfig      `mapstructure:"business"`
 	Log           LogConfig           `mapstructure:"log"`
 	Elasticsearch ElasticsearchConfig `mapstructure:"elasticsearch"`
+	Logstash      LogstashConfig      `mapstructure:"logstash"`
 	YApi          YApiConfig          `mapstructure:"yapi"`
 }
 
@@ -82,6 +83,17 @@ type ElasticsearchConfig struct {
 	Password string   `mapstructure:"password"`  // 密码（可选）
 	Index    string   `mapstructure:"index"`     // 索引名称
 	MaxRetry int      `mapstructure:"max_retry"` // 最大重试次数
+}
+
+// LogstashConfig Logstash配置
+type LogstashConfig struct {
+	Enabled    bool   `mapstructure:"enabled"`     // 是否启用 Logstash
+	Host       string `mapstructure:"host"`        // Logstash 服务器地址
+	Port       int    `mapstructure:"port"`        // Logstash TCP 端口
+	Protocol   string `mapstructure:"protocol"`    // 协议：tcp 或 udp
+	Timeout    int    `mapstructure:"timeout"`     // 连接超时（秒）
+	Reconnect  bool   `mapstructure:"reconnect"`   // 是否自动重连
+	BufferSize int    `mapstructure:"buffer_size"` // 缓冲区大小
 }
 
 // YApiConfig YApi配置

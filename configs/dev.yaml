@@ -58,6 +58,16 @@ elasticsearch:
   index: "hi-go-logs"  # 索引名称
   max_retry: 3      # 最大重试次数
 
+# Logstash 日志集收配置
+logstash:
+  enabled: true  # 是否启用 Logstash 日志集收（true/false）
+  host: localhost  # Logstash 服务器地址
+  port: 5044       # Logstash TCP 端口
+  protocol: tcp    # 协议：tcp 或 udp
+  timeout: 5       # 连接超时（秒）
+  reconnect: true  # 是否自动重连
+  buffer_size: 8192  # 缓冲区大小
+
 # YApi 自动同步配置（可选）
 yapi:
   enabled: true  # 是否启用自动同步到 YApi（true/false）

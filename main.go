@@ -71,6 +71,14 @@ func initLogger() {
 		ESMaxRetry:  config.Config.Elasticsearch.MaxRetry,
 		ESBatchSize: 100, // 默认批量大小
 		ESFlushTime: 5,   // 默认5秒刷新一次
+		// Logstash 配置
+		LogstashEnabled:    config.Config.Logstash.Enabled,
+		LogstashHost:       config.Config.Logstash.Host,
+		LogstashPort:       config.Config.Logstash.Port,
+		LogstashProtocol:   config.Config.Logstash.Protocol,
+		LogstashTimeout:    config.Config.Logstash.Timeout,
+		LogstashReconnect:  config.Config.Logstash.Reconnect,
+		LogstashBufferSize: config.Config.Logstash.BufferSize,
 	}
 	if err := logger.Init(cfg); err != nil {
 		logger.Fatalf("日志初始化失败: %v", err)

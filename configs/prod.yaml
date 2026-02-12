@@ -46,6 +46,16 @@ log:
   max_age: 90
   compress: true
 
+# Logstash 日志集收配置
+logstash:
+  enabled: true  # 生产环境建议启用
+  host: prod-logstash-server
+  port: 5000
+  protocol: tcp
+  timeout: 5
+  reconnect: true
+  buffer_size: 8192
+
 # Elasticsearch 日志配置
 elasticsearch:
   enabled: true  # 生产环境建议启用
