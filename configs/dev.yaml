@@ -42,7 +42,7 @@ business:
 
 log:
   level: debug  # debug, info, warn, error
-  filename: logs/dev.log
+  filename: ""
   max_size: 10      # 每个日志文件最大大小（MB）
   max_backups: 5    # 保留旧日志文件的最大个数
   max_age: 30       # 保留旧日志文件的最大天数
