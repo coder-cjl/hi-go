@@ -16,15 +16,15 @@ func SetupHomeRoutes(r *gin.RouterGroup) {
 	home := r.Group("/home")
 	home.Use(middleware.JWTAuth())
 	{
-		// 获取首页列表（不需要认证）
+		// 获取首页列表
 		home.GET("/list", homeHandler.List)
-		// 创建模拟数据（不需要认证）
+		// 创建模拟数据
 		home.POST("/create", homeHandler.Create)
-		// 更新首页内容（不需要认证）
+		// 更新首页内容
 		home.POST("/update", homeHandler.Update)
-		// 删除首页内容（不需要认证）
+		// 删除首页内容
 		home.DELETE("/delete", homeHandler.Delete)
-		// 搜索首页内容（不需要认证）
+		// 搜索首页内容
 		home.GET("/search", homeHandler.Search)
 	}
 }
