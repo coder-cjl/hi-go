@@ -34,11 +34,16 @@ type HomeListDataResponse struct {
 
 // HomeUpdateRequest 首页更新请求
 type HomeUpdateRequest struct {
-	ID          int64  `json:"id" binding:"required"`                   // 首页内容ID
-	Title       string `json:"title" binding:"omitempty,max=200"`       // 标题
-	Description string `json:"description" binding:"omitempty,max=500"` // 描述
-	ImageURL    string `json:"image_url" binding:"omitempty,max=500"`   // 图片URL
-	Link        string `json:"link" binding:"omitempty,max=500"`        // 链接
+	ID          int64  `json:"id" binding:"required"`                     // 首页内容ID
+	Title       string `json:"title" binding:"omitempty,max=200"`        // 标题
+	Description string `json:"description" binding:"omitempty,max=500"`  // 描述
+	ImageURL    string `json:"image_url" binding:"omitempty,max=500"`    // 图片URL
+	Link        string `json:"link" binding:"omitempty,max=500"`         // 链接
 	Sort        *int   `json:"sort" binding:"omitempty,min=0"`          // 排序
 	Status      *int   `json:"status" binding:"omitempty,oneof=0 1"`    // 状态
+}
+
+// HomeDeleteRequest 首页删除请求
+type HomeDeleteRequest struct {
+	ID int64 `json:"id" binding:"required"` // 首页内容ID
 }

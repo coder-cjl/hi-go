@@ -99,3 +99,32 @@ func (h *HomeHandler) Update(c *gin.Context) {
 
 	model.SuccessWithMessage(c, "更新成功", nil)
 }
+
+// Delete 删除首页内容
+// @Summary      删除首页内容
+// @Description  根据ID删除首页内容信息
+// @Tags         首页模块
+// @Accept       json
+// @Produce      json
+// @Param        request  body      model.HomeDeleteRequest  true  "删除请求参数"
+// @Success      200      {object}  model.Response  "删除成功"
+// @Failure      400      {object}  model.Response  "参数错误"
+// @Failure      404      {object}  model.Response  "记录不存在"
+// @Failure      500      {object}  model.Response  "服务器错误"
+// @Router       /home/delete [delete]
+func (h *HomeHandler) Delete(c *gin.Context) {
+	// 1. 绑定请求参数
+	var req model.HomeDeleteRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		model.ParamError(c, "参数错误: "+err.Error())
+		return
+	}
+
+	// 2. 调用服务层删除
+	if err := h.homeService.Delete(&req); err != nil {
+		model.ServerError(c, "删除失败: "+err.Error())
+		return
+	}
+
+	model.SuccessWithMessage(c, "删除成功", nil)
+}

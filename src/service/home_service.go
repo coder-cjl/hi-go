@@ -99,3 +99,15 @@ func (s *HomeService) Update(req *model.HomeUpdateRequest) error {
 
 	return s.homeRepo.Update(req.ID, updates)
 }
+
+// Delete 删除首页内容
+func (s *HomeService) Delete(req *model.HomeDeleteRequest) error {
+	// 1. 检查记录是否存在
+	_, err := s.homeRepo.FindByID(req.ID)
+	if err != nil {
+		return fmt.Errorf("首页内容不存在")
+	}
+
+	// 2. 执行删除
+	return s.homeRepo.Delete(req.ID)
+}

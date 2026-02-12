@@ -61,3 +61,8 @@ func (r *HomeRepository) BatchCreate(homes []model.Home) error {
 func (r *HomeRepository) Update(id int64, updates map[string]interface{}) error {
 	return mysql.Database.Model(&model.Home{}).Where("id = ?", id).Updates(updates).Error
 }
+
+// Delete 删除首页内容
+func (r *HomeRepository) Delete(id int64) error {
+	return mysql.Database.Delete(&model.Home{}, id).Error
+}

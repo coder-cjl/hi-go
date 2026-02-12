@@ -22,5 +22,7 @@ func SetupHomeRoutes(r *gin.RouterGroup) {
 		home.POST("/create", homeHandler.Create)
 		// 更新首页内容（不需要认证）
 		home.POST("/update", homeHandler.Update)
+		// 删除首页内容（不需要认证）
+		home.DELETE("/delete", homeHandler.Delete)
 	}
 }
