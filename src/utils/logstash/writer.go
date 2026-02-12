@@ -93,7 +93,7 @@ func (w *Writer) connect() error {
 		w.connected = false
 	}
 
-	addr := fmt.Sprintf("%s:%d", w.host, w.port)
+	addr := net.JoinHostPort(w.host, fmt.Sprintf("%d", w.port))
 	conn, err := net.DialTimeout(w.protocol, addr, w.timeout)
 	if err != nil {
 		return fmt.Errorf("failed to connect to %s: %w", addr, err)
