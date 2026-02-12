@@ -111,3 +111,28 @@ func (s *HomeService) Delete(req *model.HomeDeleteRequest) error {
 	// 2. 执行删除
 	return s.homeRepo.Delete(req.ID)
 }
+
+// Search 搜索首页内容
+func (s *HomeService) Search(req *model.HomeSearchRequest) (*model.HomeListDataResponse, error) {
+	// 设置默认分页参数
+	if req.Page <= 0 {
+		req.Page = 1
+	}
+	if req.PageSize <= 0 {
+		req.PageSize = config.Config.Business.DefaultPageSize
+	}
+	if req.PageSize > config.Config.Business.MaxPageSize {
+		req.PageSize = config.Config.Business.MaxPageSize
+	}
+
+	// 查询数据
+	list, total, err := s.homeRepo.Search(req.Keyword, req.Page, req.PageSize)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.HomeListDataResponse{
+		List:  list,
+		Total: total,
+	}, nil
+}

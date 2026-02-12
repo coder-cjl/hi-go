@@ -47,3 +47,10 @@ type HomeUpdateRequest struct {
 type HomeDeleteRequest struct {
 	ID int64 `json:"id" binding:"required"` // 首页内容ID
 }
+
+// HomeSearchRequest 首页搜索请求
+type HomeSearchRequest struct {
+	Keyword  string `form:"keyword" binding:"omitempty"`            // 搜索关键词（标题或描述）
+	Page     int    `form:"page" binding:"omitempty,min=1"`         // 页码
+	PageSize int    `form:"page_size" binding:"omitempty,min=1"`    // 每页数量
+}

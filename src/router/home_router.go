@@ -24,5 +24,7 @@ func SetupHomeRoutes(r *gin.RouterGroup) {
 		home.POST("/update", homeHandler.Update)
 		// 删除首页内容（不需要认证）
 		home.DELETE("/delete", homeHandler.Delete)
+		// 搜索首页内容（不需要认证）
+		home.GET("/search", homeHandler.Search)
 	}
 }

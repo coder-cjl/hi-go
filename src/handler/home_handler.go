@@ -128,3 +128,36 @@ func (h *HomeHandler) Delete(c *gin.Context) {
 
 	model.SuccessWithMessage(c, "删除成功", nil)
 }
+
+// Search 搜索首页内容
+// @Summary      搜索首页内容
+// @Description  根据关键词搜索首页标题或描述
+// @Tags         首页模块
+// @Accept       json
+// @Produce      json
+// @Param        keyword   query     string  false  "搜索关键词"
+// @Param        page      query     int     false  "页码（默认1）"
+// @Param        page_size query     int     false  "每页数量（默认20，最大100）"
+// @Success      200       {object}  model.Response{data=model.HomeListDataResponse}  "搜索成功"
+// @Failure      400       {object}  model.Response  "参数错误"
+// @Failure      500       {object}  model.Response  "服务器错误"
+// @Router       /home/search [get]
+func (h *HomeHandler) Search(c *gin.Context) {
+	var req model.HomeSearchRequest
+
+	// 1. 绑定查询参数
+	if err := c.ShouldBindQuery(&req); err != nil {
+		model.ParamError(c, "参数错误: "+err.Error())
+		return
+	}
+
+	// 2. 调用服务层搜索
+	resp, err := h.homeService.Search(&req)
+	if err != nil {
+		model.ServerError(c, "搜索失败: "+err.Error())
+		return
+	}
+
+	// 3. 返回成功响应
+	model.Success(c, resp)
+}

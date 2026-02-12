@@ -66,3 +66,34 @@ func (r *HomeRepository) Update(id int64, updates map[string]interface{}) error 
 func (r *HomeRepository) Delete(id int64) error {
 	return mysql.Database.Delete(&model.Home{}, id).Error
 }
+
+// Search 搜索首页内容（标题和描述模糊搜索）
+func (r *HomeRepository) Search(keyword string, page, pageSize int) ([]model.Home, int64, error) {
+	var homes []model.Home
+	var total int64
+
+	// 构建查询
+	query := mysql.Database.Model(&model.Home{})
+
+	// 如果有关键词，添加模糊搜索条件
+	if keyword != "" {
+		keyword = "%" + keyword + "%"
+		query = query.Where("title LIKE ? OR description LIKE ?", keyword, keyword)
+	}
+
+	// 只查询启用的
+	query = query.Where("status = ?", 1)
+
+	// 查询总数
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 分页查询
+	offset := (page - 1) * pageSize
+	if err := query.Offset(offset).Limit(pageSize).Order("sort ASC, id DESC").Find(&homes).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return homes, total, nil
+}

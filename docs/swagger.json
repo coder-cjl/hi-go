@@ -46,6 +46,58 @@
                 }
             }
         },
+        "/home/delete": {
+            "delete": {
+                "description": "根据ID删除首页内容信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "首页模块"
+                ],
+                "summary": "删除首页内容",
+                "parameters": [
+                    {
+                        "description": "删除请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.HomeDeleteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "删除成功",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "记录不存在",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器错误",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/home/list": {
             "get": {
                 "description": "分页获取首页内容列表，包括标题、描述、图片等信息",
@@ -107,7 +159,74 @@
                 }
             }
         },
-        "/home/{id}": {
+        "/home/search": {
+            "get": {
+                "description": "根据关键词搜索首页标题或描述",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "首页模块"
+                ],
+                "summary": "搜索首页内容",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码（默认1）",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量（默认20，最大100）",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "搜索成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.HomeListDataResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器错误",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/home/update": {
             "post": {
                 "description": "根据ID更新首页内容信息",
                 "consumes": [
@@ -370,6 +489,18 @@
                 }
             }
         },
+        "model.HomeDeleteRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "首页内容ID",
+                    "type": "integer"
+                }
+            }
+        },
         "model.HomeListDataResponse": {
             "type": "object",
             "properties": {
@@ -388,11 +519,18 @@
         },
         "model.HomeUpdateRequest": {
             "type": "object",
+            "required": [
+                "id"
+            ],
             "properties": {
                 "description": {
                     "description": "描述",
                     "type": "string",
                     "maxLength": 500
+                },
+                "id": {
+                    "description": "首页内容ID",
+                    "type": "integer"
                 },
                 "image_url": {
                     "description": "图片URL",
