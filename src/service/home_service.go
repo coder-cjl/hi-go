@@ -64,9 +64,9 @@ func (s *HomeService) CreateMockData() error {
 }
 
 // Update 更新首页内容
-func (s *HomeService) Update(id int64, req *model.HomeUpdateRequest) error {
+func (s *HomeService) Update(req *model.HomeUpdateRequest) error {
 	// 1. 检查记录是否存在
-	_, err := s.homeRepo.FindByID(id)
+	_, err := s.homeRepo.FindByID(req.ID)
 	if err != nil {
 		return fmt.Errorf("首页内容不存在")
 	}
@@ -97,5 +97,5 @@ func (s *HomeService) Update(id int64, req *model.HomeUpdateRequest) error {
 		return fmt.Errorf("没有需要更新的字段")
 	}
 
-	return s.homeRepo.Update(id, updates)
+	return s.homeRepo.Update(req.ID, updates)
 }

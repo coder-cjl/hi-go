@@ -34,6 +34,7 @@ type HomeListDataResponse struct {
 
 // HomeUpdateRequest 首页更新请求
 type HomeUpdateRequest struct {
+	ID          int64  `json:"id" binding:"required"`                   // 首页内容ID
 	Title       string `json:"title" binding:"omitempty,max=200"`       // 标题
 	Description string `json:"description" binding:"omitempty,max=500"` // 描述
 	ImageURL    string `json:"image_url" binding:"omitempty,max=500"`   // 图片URL

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"hi-go/src/model"
 	"hi-go/src/service"
 
@@ -83,16 +82,8 @@ func (h *HomeHandler) Create(c *gin.Context) {
 // @Failure      400      {object}  model.Response  "参数错误"
 // @Failure      404      {object}  model.Response  "记录不存在"
 // @Failure      500      {object}  model.Response  "服务器错误"
-// @Router       /home/{id} [post]
+// @Router       /home/update [post]
 func (h *HomeHandler) Update(c *gin.Context) {
-	// 1. 获取ID参数
-	id := c.Param("id")
-	var homeID int64
-	if _, err := fmt.Sscanf(id, "%d", &homeID); err != nil {
-		model.ParamError(c, "ID格式错误")
-		return
-	}
-
 	// 2. 绑定请求参数
 	var req model.HomeUpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -101,7 +92,7 @@ func (h *HomeHandler) Update(c *gin.Context) {
 	}
 
 	// 3. 调用服务层更新
-	if err := h.homeService.Update(homeID, &req); err != nil {
+	if err := h.homeService.Update(&req); err != nil {
 		model.ServerError(c, "更新失败: "+err.Error())
 		return
 	}
