@@ -74,3 +74,27 @@ yapi:
   server_url: http://127.0.0.1:3000  # YApi 服务器地址
   project_id: "11"  # YApi 项目 ID
   token: "7e3e79abf65d86174ef76059c4fe1297191fff202a928e153b89a21e08debe73"       # YApi 项目 Token（在项目设置-token配置中获取）
+
+# AI 配置
+ai:
+  enabled: true  # 是否启用AI功能
+  provider: deepseek  # AI提供商：openai, deepseek, anthropic 等
+  model: deepseek-chat  # 模型名称
+  api_key: sk-914e811e0a13460b87ca4925d8810e69  # DeepSeek API密钥，请在 https://platform.deepseek.com/ 获取
+  base_url: https://api.deepseek.com  # DeepSeek API基础URL
+  timeout: 30  # 请求超时（秒）
+  max_tokens: 4000  # 最大token数
+  temperature: 0.7  # 温度参数（0-2，越高越随机）
+  system_prompt: "你是一个智能助手，可以帮助用户查询天气等信息。请根据用户的问题，使用合适的工具来获取信息并给出回答。"
+  
+  # AI 技能配置
+  skills:
+    # 天气查询技能
+    weather:
+      enabled: true  # 是否启用天气查询功能
+      provider: qweather  # 天气服务提供商：qweather（和风天气）, openweather
+      api_key: 1e9f39dd5a4d4a299064818401b0652b  # 和风天气 API Key，请在 https://dev.qweather.com/ 注册获取
+      base_url: https://devapi.qweather.com/v7  # 和风天气API地址（开发版）
+      timeout: 10  # 请求超时（秒）
+      cache_ttl: 1800  # 缓存时间（秒），30分钟
+      max_retries: 3  # 最大重试次数

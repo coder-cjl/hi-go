@@ -12,6 +12,7 @@ type AppConfig struct {
 	Elasticsearch ElasticsearchConfig `mapstructure:"elasticsearch"`
 	Logstash      LogstashConfig      `mapstructure:"logstash"`
 	YApi          YApiConfig          `mapstructure:"yapi"`
+	AI            AIConfig            `mapstructure:"ai"`
 }
 
 // ServerConfig 服务器配置
@@ -102,4 +103,34 @@ type YApiConfig struct {
 	ServerURL string `mapstructure:"server_url"` // YApi服务器地址
 	ProjectID string `mapstructure:"project_id"` // 项目ID
 	Token     string `mapstructure:"token"`      // 项目 Token
+}
+
+// AIConfig AI配置
+type AIConfig struct {
+	Enabled      bool           `mapstructure:"enabled"`       // 是否启用AI功能
+	Provider     string         `mapstructure:"provider"`      // AI提供商：openai, deepseek, anthropic等
+	Model        string         `mapstructure:"model"`         // 模型名称
+	APIKey       string         `mapstructure:"api_key"`       // API密钥
+	BaseURL      string         `mapstructure:"base_url"`      // API基础URL
+	Timeout      int            `mapstructure:"timeout"`       // 请求超时（秒）
+	MaxTokens    int            `mapstructure:"max_tokens"`    // 最大token数
+	Temperature  float64        `mapstructure:"temperature"`   // 温度参数
+	SystemPrompt string         `mapstructure:"system_prompt"` // 系统提示词
+	Skills       AISkillsConfig `mapstructure:"skills"`        // AI技能配置
+}
+
+// AISkillsConfig AI技能配置
+type AISkillsConfig struct {
+	Weather WeatherSkillConfig `mapstructure:"weather"` // 天气查询技能
+}
+
+// WeatherSkillConfig 天气查询技能配置
+type WeatherSkillConfig struct {
+	Enabled    bool   `mapstructure:"enabled"`     // 是否启用
+	Provider   string `mapstructure:"provider"`    // 天气API提供商：qweather, openweather
+	APIKey     string `mapstructure:"api_key"`     // API密钥
+	BaseURL    string `mapstructure:"base_url"`    // API基础URL
+	Timeout    int    `mapstructure:"timeout"`     // 请求超时（秒）
+	CacheTTL   int    `mapstructure:"cache_ttl"`   // 缓存时间（秒）
+	MaxRetries int    `mapstructure:"max_retries"` // 最大重试次数
 }

@@ -1,7 +1,9 @@
 package router
 
 import (
+	"hi-go/src/handler"
 	"hi-go/src/middleware"
+	"hi-go/src/service/aiservice"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,6 +33,11 @@ func Setup() *gin.Engine {
 		SetupUserRoutes(api)
 		// 首页模块路由
 		SetupHomeRoutes(api)
+		// AI模块路由（如果AI服务已启用）
+		if aiservice.GlobalService != nil {
+			aiHandler := handler.NewAIHandler(aiservice.GlobalService)
+			RegisterAIRoutes(api, aiHandler)
+		}
 	}
 
 	return r

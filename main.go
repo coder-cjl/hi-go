@@ -5,6 +5,7 @@ import (
 	"hi-go/src/config"
 	"hi-go/src/model"
 	"hi-go/src/router"
+	"hi-go/src/service/aiservice"
 	"hi-go/src/utils/jwt"
 	"hi-go/src/utils/logger"
 	"hi-go/src/utils/mysql"
@@ -200,9 +201,12 @@ func main() {
 	// 7. 初始化数据库（迁移表结构）
 	initDB()
 
-	// 8. 同步 Swagger 文档到 YApi（可选）
+	// 8. 初始化AI服务
+	aiservice.Init()
+
+	// 9. 同步 Swagger 文档到 YApi（可选）
 	initYApiSync()
 
-	// 9. 设置路由并启动服务
+	// 10. 设置路由并启动服务
 	initRouter()
 }
