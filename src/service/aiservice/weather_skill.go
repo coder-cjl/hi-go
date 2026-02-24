@@ -96,7 +96,8 @@ func (w *WeatherSkill) fetchWeather(ctx context.Context, location string) (*Weat
 	case "qweather":
 		return w.fetchQWeather(ctx, location)
 	case "openweather":
-		return w.fetchOpenWeather(ctx, location)
+		return nil, fmt.Errorf("openweather provider not implemented yet")
+		// return w.fetchOpenWeather(ctx, location)
 	default:
 		return nil, fmt.Errorf("unsupported weather provider: %s", w.config.Provider)
 	}
@@ -269,10 +270,10 @@ func (w *WeatherSkill) getCityID(ctx context.Context, location string) (string, 
 }
 
 // fetchOpenWeather 从OpenWeather获取数据
-func (w *WeatherSkill) fetchOpenWeather(ctx context.Context, location string) (*WeatherResponse, error) {
-	// OpenWeather API 实现（可选）
-	return nil, fmt.Errorf("openweather provider not implemented yet")
-}
+// func (w *WeatherSkill) fetchOpenWeather(ctx context.Context, location string) (*WeatherResponse, error) {
+// 	// OpenWeather API 实现（可选）
+// 	return nil, fmt.Errorf("openweather provider not implemented yet")
+// }
 
 // WeatherResponse 统一的天气响应格式
 type WeatherResponse struct {
