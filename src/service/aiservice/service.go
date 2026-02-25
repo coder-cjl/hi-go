@@ -21,6 +21,15 @@ type Service struct {
 // AIClient AI客户端接口
 type AIClient interface {
 	Chat(ctx context.Context, messages []Message, tools []Tool) (*ChatResponse, error)
+	ChatStream(ctx context.Context, messages []Message, tools []Tool) (<-chan StreamResponse, error)
+}
+
+// StreamResponse 流式响应
+type StreamResponse struct {
+	Content      string     `json:"content"`
+	ToolCalls    []ToolCall `json:"tool_calls,omitempty"`
+	FinishReason string     `json:"finish_reason"`
+	Error        error      `json:"-"`
 }
 
 // Message 消息结构
@@ -122,6 +131,26 @@ func (s *Service) Chat(ctx context.Context, userMessage string) (string, error) 
 	}
 
 	return "", fmt.Errorf("超过最大对话轮数")
+}
+
+// ChatStream 流式对话
+func (s *Service) ChatStream(ctx context.Context, userMessage string) (<-chan StreamResponse, error) {
+	messages := []Message{
+		{
+			Role:    "system",
+			Content: s.config.SystemPrompt,
+		},
+		{
+			Role:    "user",
+			Content: userMessage,
+		},
+	}
+
+	// 获取所有可用的技能作为工具
+	tools := s.getTools()
+
+	// 返回流式响应通道
+	return s.client.ChatStream(ctx, messages, tools)
 }
 
 // executeToolCalls 执行工具调用

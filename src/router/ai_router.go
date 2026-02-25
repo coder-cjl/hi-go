@@ -14,6 +14,7 @@ func RegisterAIRoutes(r *gin.RouterGroup, aiHandler *handler.AIHandler) {
 
 	ai := r.Group("/ai")
 	{
-		ai.POST("/chat", aiHandler.Chat)
+		ai.POST("/chat", aiHandler.Chat)   // 普通POST请求
+		ai.POST("/chat2", aiHandler.Chat2) // SSE流式请求
 	}
 }
