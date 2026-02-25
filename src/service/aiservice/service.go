@@ -133,24 +133,110 @@ func (s *Service) Chat(ctx context.Context, userMessage string) (string, error) 
 	return "", fmt.Errorf("超过最大对话轮数")
 }
 
-// ChatStream 流式对话
+// ChatStream 流式对话（支持工具调用的多轮对话）
 func (s *Service) ChatStream(ctx context.Context, userMessage string) (<-chan StreamResponse, error) {
-	messages := []Message{
-		{
-			Role:    "system",
-			Content: s.config.SystemPrompt,
-		},
-		{
-			Role:    "user",
-			Content: userMessage,
-		},
-	}
+	outputChan := make(chan StreamResponse, 10)
 
-	// 获取所有可用的技能作为工具
-	tools := s.getTools()
+	go func() {
+		defer close(outputChan)
 
-	// 返回流式响应通道
-	return s.client.ChatStream(ctx, messages, tools)
+		messages := []Message{
+			{
+				Role:    "system",
+				Content: s.config.SystemPrompt,
+			},
+			{
+				Role:    "user",
+				Content: userMessage,
+			},
+		}
+
+		// 获取所有可用的技能作为工具
+		tools := s.getTools()
+
+		// 最多执行5轮对话（防止无限循环）
+		maxRounds := 5
+		for round := 0; round < maxRounds; round++ {
+			// 调用AI流式接口
+			streamChan, err := s.client.ChatStream(ctx, messages, tools)
+			if err != nil {
+				outputChan <- StreamResponse{Error: err}
+				return
+			}
+
+			var accumulatedContent string
+			var accumulatedToolCalls []ToolCall
+			var lastFinishReason string
+
+			// 读取流式响应
+			for resp := range streamChan {
+				if resp.Error != nil {
+					outputChan <- resp
+					return
+				}
+
+				// 累积内容
+				if resp.Content != "" {
+					accumulatedContent += resp.Content
+					// 转发给客户端
+					outputChan <- StreamResponse{
+						Content: resp.Content,
+					}
+				}
+
+				// 累积工具调用
+				if len(resp.ToolCalls) > 0 {
+					accumulatedToolCalls = append(accumulatedToolCalls, resp.ToolCalls...)
+				}
+
+				// 记录完成原因
+				if resp.FinishReason != "" {
+					lastFinishReason = resp.FinishReason
+				}
+			}
+
+			// 如果没有工具调用，说明对话完成
+			if len(accumulatedToolCalls) == 0 {
+				// 发送完成信号
+				outputChan <- StreamResponse{
+					FinishReason: lastFinishReason,
+				}
+				return
+			}
+
+			// 有工具调用，执行工具
+			logger.Info("检测到工具调用，开始执行", zap.Int("count", len(accumulatedToolCalls)))
+
+			// 将助手的响应（包含工具调用）添加到消息历史
+			messages = append(messages, Message{
+				Role:      "assistant",
+				Content:   accumulatedContent,
+				ToolCalls: accumulatedToolCalls,
+			})
+
+			// 执行工具调用
+			toolResults, err := s.executeToolCalls(ctx, accumulatedToolCalls)
+			if err != nil {
+				logger.Error("执行工具调用失败", zap.Error(err))
+				outputChan <- StreamResponse{
+					Error: fmt.Errorf("执行工具调用失败: %w", err),
+				}
+				return
+			}
+
+			// 将工具调用结果添加到消息历史
+			messages = append(messages, toolResults...)
+
+			// 继续下一轮对话，AI会基于工具结果生成最终回答
+		}
+
+		// 超过最大轮数
+		outputChan <- StreamResponse{
+			Error: fmt.Errorf("超过最大对话轮数"),
+		}
+	}()
+
+	return outputChan, nil
 }
 
 // executeToolCalls 执行工具调用

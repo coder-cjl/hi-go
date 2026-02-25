@@ -103,23 +103,19 @@ func (h *AIHandler) Chat2(c *gin.Context) {
 				return false
 			}
 
-			// 发送内容增量
+			// 只发送内容增量（工具调用在内部处理，不发送给客户端）
 			if resp.Content != "" {
 				c.SSEvent("message", fmt.Sprintf(`{"content": "%s"}`, resp.Content))
-			}
-
-			// 发送工具调用（如果有）
-			if len(resp.ToolCalls) > 0 {
-				c.SSEvent("tool_calls", fmt.Sprintf(`{"tool_calls": %v}`, resp.ToolCalls))
+				c.Writer.Flush()
 			}
 
 			// 如果完成，发送完成事件
 			if resp.FinishReason != "" {
 				c.SSEvent("done", fmt.Sprintf(`{"finish_reason": "%s"}`, resp.FinishReason))
+				c.Writer.Flush()
 				return false
 			}
 
-			c.Writer.Flush()
 			return true
 		}
 		return false

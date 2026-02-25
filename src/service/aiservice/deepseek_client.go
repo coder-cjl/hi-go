@@ -143,7 +143,8 @@ func (c *DeepSeekClient) ChatStream(ctx context.Context, messages []Message, too
 
 		reader := &sseReader{reader: resp.Body}
 		var accumulatedContent string
-		var accumulatedToolCalls []ToolCall
+		// 使用map来累积工具调用，key是工具调用的index
+		toolCallsMap := make(map[int]*ToolCall)
 
 		for {
 			select {
@@ -166,7 +167,26 @@ func (c *DeepSeekClient) ChatStream(ctx context.Context, messages []Message, too
 
 				data := line[6:]
 				if data == "[DONE]" {
-					// 流结束
+					// 流结束，发送最终累积结果
+					if accumulatedContent != "" || len(toolCallsMap) > 0 {
+						// 转换map为数组
+						var finalToolCalls []ToolCall
+						for i := 0; i < len(toolCallsMap); i++ {
+							if tc, ok := toolCallsMap[i]; ok {
+								finalToolCalls = append(finalToolCalls, *tc)
+							}
+						}
+
+						finalResp := StreamResponse{
+							Content:      accumulatedContent,
+							ToolCalls:    finalToolCalls,
+							FinishReason: "stop",
+						}
+						select {
+						case responseChan <- finalResp:
+						case <-ctx.Done():
+						}
+					}
 					return
 				}
 
@@ -184,31 +204,50 @@ func (c *DeepSeekClient) ChatStream(ctx context.Context, messages []Message, too
 				// 累积内容
 				if delta.Content != "" {
 					accumulatedContent += delta.Content
+					// 发送内容增量
+					select {
+					case responseChan <- StreamResponse{
+						Content: delta.Content,
+					}:
+					case <-ctx.Done():
+						return
+					}
 				}
 
-				// 累积工具调用
+				// 累积工具调用（增量合并）
 				if len(delta.ToolCalls) > 0 {
-					accumulatedToolCalls = append(accumulatedToolCalls, delta.ToolCalls...)
-				}
-
-				// 发送流式响应
-				streamResp := StreamResponse{
-					Content:      delta.Content,
-					ToolCalls:    delta.ToolCalls,
-					FinishReason: chunk.Choices[0].FinishReason,
-				}
-
-				select {
-				case responseChan <- streamResp:
-				case <-ctx.Done():
-					return
+					for _, deltaTC := range delta.ToolCalls {
+						idx := deltaTC.Index
+						if _, exists := toolCallsMap[idx]; !exists {
+							// 首次出现，初始化
+							toolCallsMap[idx] = &ToolCall{
+								ID:   deltaTC.ID,
+								Type: deltaTC.Type,
+								Function: FunctionCall{
+									Name:      deltaTC.Function.Name,
+									Arguments: deltaTC.Function.Arguments,
+								},
+							}
+						} else {
+							// 累积arguments
+							toolCallsMap[idx].Function.Arguments += deltaTC.Function.Arguments
+						}
+					}
 				}
 
 				// 如果完成，发送最终累积结果
 				if chunk.Choices[0].FinishReason != "" {
+					// 转换map为数组
+					var finalToolCalls []ToolCall
+					for i := 0; i < len(toolCallsMap); i++ {
+						if tc, ok := toolCallsMap[i]; ok {
+							finalToolCalls = append(finalToolCalls, *tc)
+						}
+					}
+
 					finalResp := StreamResponse{
 						Content:      accumulatedContent,
-						ToolCalls:    accumulatedToolCalls,
+						ToolCalls:    finalToolCalls,
 						FinishReason: chunk.Choices[0].FinishReason,
 					}
 					select {
@@ -263,12 +302,23 @@ type DeepSeekStreamChunk struct {
 	Choices []struct {
 		Index int `json:"index"`
 		Delta struct {
-			Role      string     `json:"role,omitempty"`
-			Content   string     `json:"content,omitempty"`
-			ToolCalls []ToolCall `json:"tool_calls,omitempty"`
+			Role      string                `json:"role,omitempty"`
+			Content   string                `json:"content,omitempty"`
+			ToolCalls []StreamToolCallDelta `json:"tool_calls,omitempty"`
 		} `json:"delta"`
 		FinishReason string `json:"finish_reason"`
 	} `json:"choices"`
+}
+
+// StreamToolCallDelta 流式工具调用增量
+type StreamToolCallDelta struct {
+	Index    int    `json:"index"`          // 工具调用的索引
+	ID       string `json:"id,omitempty"`   // 工具调用ID（首次）
+	Type     string `json:"type,omitempty"` // "function"（首次）
+	Function struct {
+		Name      string `json:"name,omitempty"`      // 函数名（首次）
+		Arguments string `json:"arguments,omitempty"` // 参数增量
+	} `json:"function,omitempty"`
 }
 
 // DeepSeek API 响应结构
