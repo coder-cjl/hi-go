@@ -136,3 +136,13 @@ func (s *HomeService) Search(req *model.HomeSearchRequest) (*model.HomeListDataR
 		Total: total,
 	}, nil
 }
+
+// GetByID 根据ID获取首页内容详情
+func (s *HomeService) GetByID(req *model.HomeGetByIDRequest) (*model.Home, error) {
+	// 调用仓储层查询
+	home, err := s.homeRepo.FindByID(req.ID)
+	if err != nil {
+		return nil, fmt.Errorf("首页内容不存在")
+	}
+	return home, nil
+}

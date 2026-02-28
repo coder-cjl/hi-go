@@ -161,3 +161,35 @@ func (h *HomeHandler) Search(c *gin.Context) {
 	// 3. 返回成功响应
 	model.Success(c, resp)
 }
+
+// GetByID 根据ID获取首页内容详情
+// @Summary      获取首页内容详情
+// @Description  根据ID获取首页内容的全部信息
+// @Tags         首页模块
+// @Accept       json
+// @Produce      json
+// @Param        id   query     int64  true  "首页内容ID"
+// @Success      200  {object}  model.Response{data=model.Home}  "查询成功"
+// @Failure      400  {object}  model.Response  "参数错误"
+// @Failure      404  {object}  model.Response  "记录不存在"
+// @Failure      500  {object}  model.Response  "服务器错误"
+// @Router       /home/detail [get]
+func (h *HomeHandler) GetByID(c *gin.Context) {
+	var req model.HomeGetByIDRequest
+
+	// 1. 绑定查询参数
+	if err := c.ShouldBindQuery(&req); err != nil {
+		model.ParamError(c, "参数错误: "+err.Error())
+		return
+	}
+
+	// 2. 调用服务层查询
+	resp, err := h.homeService.GetByID(&req)
+	if err != nil {
+		model.ParamError(c, err.Error())
+		return
+	}
+
+	// 3. 返回成功响应
+	model.Success(c, resp)
+}

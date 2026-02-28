@@ -54,3 +54,8 @@ type HomeSearchRequest struct {
 	Page     int    `form:"page" binding:"omitempty,min=1"`         // 页码
 	PageSize int    `form:"page_size" binding:"omitempty,min=1"`    // 每页数量
 }
+
+// HomeGetByIDRequest 首页根据ID查询请求
+type HomeGetByIDRequest struct {
+	ID int64 `form:"id" binding:"required"` // 首页内容ID
+}

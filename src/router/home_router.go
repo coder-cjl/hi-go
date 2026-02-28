@@ -26,5 +26,7 @@ func SetupHomeRoutes(r *gin.RouterGroup) {
 		home.DELETE("/delete", homeHandler.Delete)
 		// 搜索首页内容
 		home.GET("/search", homeHandler.Search)
+		// 根据ID获取首页内容详情
+		home.GET("/detail", homeHandler.GetByID)
 	}
 }
