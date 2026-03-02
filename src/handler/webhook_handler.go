@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"hi-go/src/model"
 	"hi-go/src/service"
+	"hi-go/src/utils/logger"
 
 	"github.com/gin-gonic/gin"
 )
@@ -212,6 +214,18 @@ func (h *WebhookHandler) Callback(c *gin.Context) {
 	if err != nil {
 		model.ParamError(c, "读取请求体失败")
 		return
+	}
+
+	var data map[string]interface{}
+	json.Unmarshal(body, &data)
+
+	logger.Debug(string(body))
+
+	switch data["event"] {
+	case "cjl-pay-success":
+		logger.Infof("收到支付成功事件，订单ID: %v", data["data"].(map[string]interface{})["order_id"])
+	default:
+		logger.Infof("收到未知事件: %v", data["event"])
 	}
 
 	// 4. 验证签名
