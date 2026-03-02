@@ -27,6 +27,8 @@ func SetupWebhookRoutes(r *gin.RouterGroup) {
 		webhook.GET("/detail/:id", webhookHandler.GetByID)
 		// 获取 webhook 列表
 		webhook.GET("/list", webhookHandler.GetList)
+		// 生成签名
+		webhook.POST("/sign", webhookHandler.Sign)
 	}
 
 	// 公开的 webhook 回调路由（不需要认证）

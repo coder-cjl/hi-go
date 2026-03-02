@@ -224,6 +224,40 @@ func (h *WebhookHandler) Callback(c *gin.Context) {
 	model.SuccessWithMessage(c, "接收成功", nil)
 }
 
+// Sign 生成签名
+// @Summary      生成 webhook 签名
+// @Description  根据 webhook ID 和请求体生成 HMAC-SHA256 签名，用于测试回调
+// @Tags         Webhook 模块
+// @Accept       json
+// @Produce      json
+// @Param        request  body      model.WebhookSignRequest  true  "签名请求参数"
+// @Success      200      {object}  model.Response{data=model.WebhookSignResponse}  "签名生成成功"
+// @Failure      400      {object}  model.Response  "参数错误"
+// @Failure      404      {object}  model.Response  "webhook 不存在"
+// @Router       /webhook/sign [post]
+func (h *WebhookHandler) Sign(c *gin.Context) {
+	var req model.WebhookSignRequest
+
+	// 1. 绑定请求参数
+	if err := c.ShouldBindJSON(&req); err != nil {
+		model.ParamError(c, "参数错误: "+err.Error())
+		return
+	}
+
+	// 2. 获取用户 ID
+	userID := getUserID(c)
+
+	// 3. 调用服务层生成签名
+	resp, err := h.webhookService.Sign(&req, userID)
+	if err != nil {
+		model.ParamError(c, err.Error())
+		return
+	}
+
+	// 4. 返回成功响应
+	model.Success(c, resp)
+}
+
 // getUserID 从 gin.Context 中获取用户 ID
 func getUserID(c *gin.Context) int64 {
 	userID, exists := c.Get("userID")

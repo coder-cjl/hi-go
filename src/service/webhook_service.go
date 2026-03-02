@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"hi-go/src/model"
 	"hi-go/src/repository"
+	"hi-go/src/utils/logger"
 	"hi-go/src/utils/snowflake"
 )
 
@@ -23,8 +24,8 @@ func NewWebhookService() *WebhookService {
 	}
 }
 
-// Create 创建 webhook
-func (s *WebhookService) Create(req *model.WebhookCreateRequest, userID int64) (*model.WebhookResponse, error) {
+// Create 创建 webhook（返回包含 secret 的响应）
+func (s *WebhookService) Create(req *model.WebhookCreateRequest, userID int64) (*model.WebhookResponseWithSecret, error) {
 	// 生成唯一 secret
 	secret, err := generateSecret()
 	if err != nil {
@@ -56,7 +57,7 @@ func (s *WebhookService) Create(req *model.WebhookCreateRequest, userID int64) (
 		return nil, fmt.Errorf("创建 webhook 失败: %v", err)
 	}
 
-	return webhook.ToResponse(), nil
+	return webhook.ToResponseWithSecret(), nil
 }
 
 // Update 更新 webhook
@@ -176,6 +177,8 @@ func (s *WebhookService) VerifyCallback(secret string, signature string, body []
 		return false
 	}
 
+	logger.Debug(string(body))
+
 	// 计算签名
 	expectedSignature := generateSignature(body, webhook.Secret)
 
@@ -197,4 +200,30 @@ func generateSignature(body []byte, secret string) string {
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write(body)
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+// Sign 生成签名（供 API 调用）
+func (s *WebhookService) Sign(req *model.WebhookSignRequest, userID int64) (*model.WebhookSignResponse, error) {
+	// 1. 检查 webhook 是否存在
+	webhook, err := s.webhookRepo.FindByID(req.ID)
+	if err != nil {
+		return nil, fmt.Errorf("webhook 不存在")
+	}
+
+	// 2. 检查权限
+	if webhook.UserID != userID {
+		return nil, fmt.Errorf("无权限访问此 webhook")
+	}
+
+	logger.Debug(req.Body)
+
+	// 3. 生成签名
+	signature := generateSignature([]byte(req.Body), webhook.Secret)
+
+	return &model.WebhookSignResponse{
+		Signature: signature,
+		Method:    "HMAC-SHA256",
+		Header:    "X-Webhook-Signature",
+		Secret:    webhook.Secret,
+	}, nil
 }

@@ -67,3 +67,47 @@ func (w *Webhook) ToResponse() *WebhookResponse {
 		UpdatedAt:   w.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
+
+// WebhookResponseWithSecret 包含 secret 的响应（仅创建时返回一次）
+type WebhookResponseWithSecret struct {
+	ID          int64  `json:"id"`
+	Name        string `json:"name"`
+	CallbackURL string `json:"callback_url"`
+	Event       string `json:"event"`
+	Enabled     int    `json:"enabled"`
+	UserID      int64  `json:"user_id"`
+	Secret      string `json:"secret"` // 仅创建时返回，后续不再显示
+	CallbackURLFull string `json:"callback_url_full"` // 完整的回调地址
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+}
+
+// ToResponseWithSecret 转换为包含 secret 的响应结构
+func (w *Webhook) ToResponseWithSecret() *WebhookResponseWithSecret {
+	return &WebhookResponseWithSecret{
+		ID:                w.ID,
+		Name:              w.Name,
+		CallbackURL:       w.CallbackURL,
+		Event:             w.Event,
+		Enabled:           w.Enabled,
+		UserID:            w.UserID,
+		Secret:            w.Secret,
+		CallbackURLFull:   "/api/webhook/callback/" + w.Secret,
+		CreatedAt:         w.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:         w.UpdatedAt.Format("2006-01-02 15:04:05"),
+	}
+}
+
+// WebhookSignRequest 生成签名请求
+type WebhookSignRequest struct {
+	ID   int64  `json:"id" binding:"required"`
+	Body string `json:"body" binding:"required"` // 需要签名的请求体
+}
+
+// WebhookSignResponse 签名响应
+type WebhookSignResponse struct {
+	Signature string `json:"signature"`
+	Method    string `json:"method"`
+	Header    string `json:"header"`
+	Secret    string `json:"secret"` // 返回 secret 用于调试
+}
