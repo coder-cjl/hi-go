@@ -38,7 +38,7 @@ func (r *HomeRepository) List(page, pageSize int) ([]model.Home, int64, error) {
 }
 
 // 根据ID查找首页内容
-func (r *HomeRepository) liangFindByID(id int64) (*model.Home, error) {
+func (r *HomeRepository) FindByID(id int64) (*model.Home, error) {
 	var home model.Home
 	err := mysql.Database.First(&home, id).Error
 	if err != nil {
