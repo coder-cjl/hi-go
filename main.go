@@ -147,7 +147,7 @@ func initSnowflake() {
 // initDB 初始化数据库（迁移表结构）
 func initDB() {
 	// 自动迁移数据库表
-	if err := mysql.Database.AutoMigrate(&model.User{}, &model.Home{}); err != nil {
+	if err := mysql.Database.AutoMigrate(&model.User{}, &model.Home{}, &model.Webhook{}); err != nil {
 		logger.Error("数据库迁移失败", zap.Error(err))
 		panic(err)
 	}

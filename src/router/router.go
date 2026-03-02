@@ -33,6 +33,8 @@ func Setup() *gin.Engine {
 		SetupUserRoutes(api)
 		// 首页模块路由
 		SetupHomeRoutes(api)
+		// Webhook 模块路由
+		SetupWebhookRoutes(api)
 		// AI模块路由（如果AI服务已启用）
 		if aiservice.GlobalService != nil {
 			aiHandler := handler.NewAIHandler(aiservice.GlobalService)
