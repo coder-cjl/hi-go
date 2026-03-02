@@ -216,6 +216,12 @@ func (h *WebhookHandler) Callback(c *gin.Context) {
 		return
 	}
 
+	// 4. 验证签名
+	if !h.webhookService.VerifyCallback(secret, signature, body) {
+		model.Unauthorized(c, "签名验证失败")
+		return
+	}
+
 	var data map[string]interface{}
 	json.Unmarshal(body, &data)
 
@@ -226,12 +232,6 @@ func (h *WebhookHandler) Callback(c *gin.Context) {
 		logger.Infof("收到支付成功事件，订单ID: %v", data["data"].(map[string]interface{})["order_id"])
 	default:
 		logger.Infof("收到未知事件: %v", data["event"])
-	}
-
-	// 4. 验证签名
-	if !h.webhookService.VerifyCallback(secret, signature, body) {
-		model.Unauthorized(c, "签名验证失败")
-		return
 	}
 
 	// 5. 返回成功响应
